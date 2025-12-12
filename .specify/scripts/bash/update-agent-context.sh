@@ -172,7 +172,8 @@ extract_plan_field() {
     local field_pattern="$1"
     local plan_file="$2"
     
-    grep "^\*\*${field_pattern}\*\*: " "$plan_file" 2>/dev/null | \
+    # Use fixed-string matching for safety (field_pattern is literal text)
+    grep -F "**${field_pattern}**: " "$plan_file" 2>/dev/null | \
         head -1 | \
         sed "s|^\*\*${field_pattern}\*\*: ||" | \
         sed 's/^[ \t]*//;s/[ \t]*$//' | \
@@ -403,8 +404,11 @@ update_existing_agent_file() {
     log_info "Updating existing agent context file..."
     
     # Use a single temporary file for atomic update
+    # Create temp file in target directory to ensure atomic mv
     local temp_file
-    temp_file=$(mktemp) || {
+    local target_dir
+    target_dir=$(dirname "$target_file")
+    temp_file=$(mktemp "${target_dir}/.tmp.agent-update.XXXXXX") || {
         log_error "Failed to create temporary file"
         return 1
     }
@@ -571,8 +575,11 @@ update_agent_file() {
     
     if [[ ! -f "$target_file" ]]; then
         # Create new file from template
+        # Create temp file in target directory to ensure atomic mv
         local temp_file
-        temp_file=$(mktemp) || {
+        local target_dir
+        target_dir=$(dirname "$target_file")
+        temp_file=$(mktemp "${target_dir}/.tmp.agent-update.XXXXXX") || {
             log_error "Failed to create temporary file"
             return 1
         }
