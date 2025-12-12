@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { getSeverityClasses } from '../utils/colors'
+import { getSeverityClasses, getSeverityTextClasses, getSeverityBorderClasses } from '../utils/colors'
 import AlertItem from './AlertItem'
 
 // Severity config with icons and order
@@ -17,37 +17,31 @@ const SEVERITY_CONFIG = {
  * @param {boolean} defaultExpanded - Whether section starts expanded (default: true for critical/high)
  */
 const AlertSection = ({ severity, alerts = [], defaultExpanded }) => {
-  const config = SEVERITY_CONFIG[severity] || { icon: '⚪', label: severity, order: 99 }
-  const isDefaultExpanded = defaultExpanded ?? (severity === 'critical' || severity === 'high')
+  // Normalize severity to lowercase for consistent lookups
+  const severityKey = (severity ?? '').toLowerCase()
+  const config = SEVERITY_CONFIG[severityKey] || { icon: '⚪', label: severity ?? 'Unknown', order: 99 }
+  const isDefaultExpanded = defaultExpanded ?? (severityKey === 'critical' || severityKey === 'high')
   const [isExpanded, setIsExpanded] = useState(isDefaultExpanded)
 
-  const severityClasses = getSeverityClasses(severity)
-  
-  // Extract specific class types for more maintainable composition
-  const allClasses = severityClasses.split(' ')
-  const borderClasses = allClasses.filter(c => c.startsWith('border-')).join(' ')
-  const textClasses = allClasses.filter(c => c.startsWith('text-') && !c.includes('dark:')).join(' ')
+  // Use dedicated color utilities for clean separation
+  const severityClasses = getSeverityClasses(severityKey)
+  const textClasses = getSeverityTextClasses(severityKey)
+  const borderClasses = getSeverityBorderClasses(severityKey)
 
   const handleToggle = () => {
     setIsExpanded(prev => !prev)
-  }
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleToggle()
-    }
   }
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
       {/* Section Header */}
       <button
+        id={`alerts-${severityKey}-header`}
+        type="button"
         onClick={handleToggle}
-        onKeyDown={handleKeyDown}
         className={`w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pulse-primary ${borderClasses}`}
         aria-expanded={isExpanded}
-        aria-controls={`alerts-${severity}`}
+        aria-controls={`alerts-${severityKey}`}
       >
         <div className="flex items-center gap-3">
           {/* Expand/Collapse Icon */}
@@ -80,12 +74,12 @@ const AlertSection = ({ severity, alerts = [], defaultExpanded }) => {
 
       {/* Section Content */}
       <div
-        id={`alerts-${severity}`}
+        id={`alerts-${severityKey}`}
         className={`transition-all duration-200 ease-in-out ${
           isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
         }`}
         role="region"
-        aria-labelledby={`alerts-${severity}-header`}
+        aria-labelledby={`alerts-${severityKey}-header`}
       >
         {alerts.length === 0 ? (
           <div className="p-4 text-center text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-700">
@@ -93,8 +87,11 @@ const AlertSection = ({ severity, alerts = [], defaultExpanded }) => {
           </div>
         ) : (
           <div className="divide-y divide-gray-100 dark:divide-gray-700 border-t border-gray-100 dark:border-gray-700">
-            {alerts.map((alert) => (
-              <AlertItem key={alert.id} alert={alert} />
+            {alerts.map((alert, idx) => (
+              <AlertItem 
+                key={alert?.id ?? `${alert?.timestamp ?? 'no-ts'}-${idx}`} 
+                alert={alert} 
+              />
             ))}
           </div>
         )}

@@ -11,6 +11,10 @@ const PortfolioSummaryCard = ({ portfolio }) => {
   const { totalValue, totalChange, totalChangePercent } = portfolio
   const changeColor = getChangeColor(totalChangePercent)
   const changeIcon = getChangeIcon(totalChangePercent)
+  
+  // Calculate values for progress bar (capped at 10% for visual scale)
+  const absPct = Math.abs(totalChangePercent)
+  const clampedPct = Math.min(absPct, 10)
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-200">
@@ -31,7 +35,7 @@ const PortfolioSummaryCard = ({ portfolio }) => {
         <div className="text-right">
           <p className={`text-lg font-semibold ${changeColor} flex items-center gap-1`} data-testid="portfolio-change-amount">
             <span aria-hidden="true">{changeIcon}</span>
-            <span>{formatCurrency(Math.abs(totalChange))}</span>
+            <span>{formatCurrency(totalChange)}</span>
           </p>
           <p className={`text-sm ${changeColor}`} data-testid="portfolio-change-percent">
             {formatPercent(totalChangePercent)}
@@ -49,9 +53,9 @@ const PortfolioSummaryCard = ({ portfolio }) => {
             className={`h-full transition-all duration-500 ${
               totalChangePercent >= 0 ? 'bg-green-500' : 'bg-red-500'
             }`}
-            style={{ width: `${Math.min(Math.abs(totalChangePercent) * 10, 100)}%` }}
+            style={{ width: `${Math.min(absPct * 10, 100)}%` }}
             role="progressbar"
-            aria-valuenow={Math.abs(totalChangePercent)}
+            aria-valuenow={clampedPct}
             aria-valuemin={0}
             aria-valuemax={10}
             aria-label={`Portfolio ${totalChangePercent >= 0 ? 'gain' : 'loss'} indicator`}

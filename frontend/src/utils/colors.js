@@ -36,6 +36,36 @@ export const getSeverityClasses = (severity) => {
 }
 
 /**
+ * Get Tailwind text color classes for severity-based styling
+ * @param {string} severity - Severity level (critical, high, medium, low)
+ * @returns {string} Tailwind classes for text color only
+ */
+export const getSeverityTextClasses = (severity) => {
+  const classes = {
+    critical: 'text-red-800 dark:text-red-300',
+    high: 'text-orange-800 dark:text-orange-300',
+    medium: 'text-yellow-800 dark:text-yellow-300',
+    low: 'text-blue-800 dark:text-blue-300'
+  }
+  return classes[severity?.toLowerCase()] || 'text-gray-800 dark:text-gray-300'
+}
+
+/**
+ * Get Tailwind border color classes for severity-based styling
+ * @param {string} severity - Severity level (critical, high, medium, low)
+ * @returns {string} Tailwind classes for border color only
+ */
+export const getSeverityBorderClasses = (severity) => {
+  const classes = {
+    critical: 'border-red-200 dark:border-red-800',
+    high: 'border-orange-200 dark:border-orange-800',
+    medium: 'border-yellow-200 dark:border-yellow-800',
+    low: 'border-blue-200 dark:border-blue-800'
+  }
+  return classes[severity?.toLowerCase()] || 'border-gray-200 dark:border-gray-700'
+}
+
+/**
  * Get Tailwind classes for impact-based styling
  * @param {string} impact - Impact level (critical, high, medium, low)
  * @returns {string} Tailwind classes for styling

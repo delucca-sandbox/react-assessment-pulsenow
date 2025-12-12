@@ -4,11 +4,14 @@ import { formatCurrency } from '../utils/formatters'
 // Custom tooltip component
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
+    // Safely extract value with fallback
+    const value = payload?.[0]?.payload?.price ?? payload?.[0]?.value
+    
     return (
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow-lg">
         <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
         <p className="text-lg font-semibold text-gray-900 dark:text-white">
-          {formatCurrency(payload[0].value)}
+          {formatCurrency(value)}
         </p>
       </div>
     )
@@ -34,12 +37,13 @@ const PriceChart = ({ data = [], color = '#6366f1', height = 300 }) => {
     )
   }
 
-  // Format data for Recharts
+  // Format data for Recharts - use raw timestamp for X-axis to avoid duplicate labels
   const chartData = data.map((point) => {
     const d = new Date(point.timestamp)
     const isValid = !Number.isNaN(d.getTime())
     return {
       ...point,
+      timestampMs: isValid ? d.getTime() : 0,
       timestampLabel: isValid
         ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         : '—'
@@ -59,7 +63,12 @@ const PriceChart = ({ data = [], color = '#6366f1', height = 300 }) => {
             className="text-gray-200 dark:text-gray-700"
           />
           <XAxis 
-            dataKey="timestampLabel" 
+            dataKey="timestampMs"
+            tickFormatter={(timestamp) => {
+              if (!timestamp) return '—'
+              const d = new Date(timestamp)
+              return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            }}
             tick={{ fontSize: 12 }}
             stroke="currentColor"
             className="text-gray-500 dark:text-gray-400"

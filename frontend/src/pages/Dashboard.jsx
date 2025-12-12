@@ -36,11 +36,16 @@ const Dashboard = () => {
 
   // Error state
   if (error) {
+    // Normalize error to string
+    const errorMessage = typeof error === 'string' 
+      ? error 
+      : (error?.message ?? String(error))
+    
     return (
       <div className="space-y-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
         <ErrorMessage 
-          message={error} 
+          message={errorMessage} 
           onRetry={refetch}
           title="Failed to load dashboard"
         />
@@ -62,7 +67,12 @@ const Dashboard = () => {
     )
   }
 
+  // Extract data with safe defaults for arrays
   const { portfolio, topGainers, topLosers, recentNews, activeAlerts } = data
+  const safeTopGainers = topGainers ?? []
+  const safeTopLosers = topLosers ?? []
+  const safeRecentNews = recentNews ?? []
+  const safeActiveAlerts = activeAlerts ?? []
 
   return (
     <div className="space-y-6">
@@ -84,12 +94,12 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TopMoversCard 
             title="Top Gainers" 
-            movers={topGainers} 
+            movers={safeTopGainers} 
             type="gainers" 
           />
           <TopMoversCard 
             title="Top Losers" 
-            movers={topLosers} 
+            movers={safeTopLosers} 
             type="losers" 
           />
         </div>
@@ -99,8 +109,8 @@ const Dashboard = () => {
       <section aria-labelledby="updates-heading">
         <h2 id="updates-heading" className="sr-only">News and Alerts</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentNewsCard news={recentNews} limit={5} />
-          <ActiveAlertsCard alerts={activeAlerts} limit={5} />
+          <RecentNewsCard news={safeRecentNews} limit={5} />
+          <ActiveAlertsCard alerts={safeActiveAlerts} limit={5} />
         </div>
       </section>
     </div>

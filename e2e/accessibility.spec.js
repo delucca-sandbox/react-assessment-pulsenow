@@ -42,7 +42,7 @@ test.describe('Accessibility', () => {
     expect(['a', 'button', 'input', 'select']).toContain(tagName)
   })
 
-  test('modal traps focus', async ({ page }) => {
+  test('modal has focusable close button', async ({ page }) => {
     await page.goto('/assets')
 
     // Wait for table to be fully loaded with data
@@ -60,7 +60,7 @@ test.describe('Accessibility', () => {
     // Wait for modal content to load
     await expect(modal).toContainText(/.+/)
 
-    // Focus should be trapped in modal - close button should be visible and focusable
+    // Close button should be visible and focusable
     const closeButton = page.getByRole('button', { name: /close modal/i })
     await expect(closeButton).toBeVisible()
   })
@@ -74,13 +74,22 @@ test.describe('Accessibility', () => {
 
     // Focused element should have visible focus ring
     const focusedElement = page.locator(':focus')
-    const outline = await focusedElement.evaluate(el => {
+    const focusStyles = await focusedElement.evaluate(el => {
       const styles = getComputedStyle(el)
-      return styles.outline || styles.boxShadow
+      return {
+        outline: styles.outline,
+        outlineStyle: styles.outlineStyle,
+        outlineWidth: styles.outlineWidth,
+        boxShadow: styles.boxShadow
+      }
     })
 
-    // Should have some focus indicator
-    expect(outline).toBeTruthy()
+    // Should have some focus indicator (not "none" or "0px")
+    const hasVisibleIndicator = 
+      (focusStyles.outlineStyle !== 'none' && focusStyles.outlineWidth !== '0px') ||
+      (focusStyles.boxShadow !== 'none' && focusStyles.boxShadow.length > 0)
+    
+    expect(hasVisibleIndicator).toBe(true)
   })
 
   test('images have alt text or are decorative', async ({ page }) => {
