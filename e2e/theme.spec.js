@@ -19,6 +19,7 @@ test.describe('Theme Toggle', () => {
     const initialDark = await html.evaluate(el => el.classList.contains('dark'))
 
     // Toggle theme
+    await expect(themeToggle).toBeEnabled()
     await themeToggle.click()
 
     // Should have toggled
@@ -36,12 +37,16 @@ test.describe('Theme Toggle', () => {
 
     // Set to dark mode
     const themeToggle = page.getByRole('button', { name: /mode/i })
+    await expect(themeToggle).toBeVisible()
     
     // Toggle to dark if not already
     const html = page.locator('html')
     const isDark = await html.evaluate(el => el.classList.contains('dark'))
     if (!isDark) {
+      await expect(themeToggle).toBeEnabled()
       await themeToggle.click()
+      // Wait for theme change to apply
+      await expect(html).toHaveClass(/dark/)
     }
 
     // Navigate to another page
@@ -57,12 +62,16 @@ test.describe('Theme Toggle', () => {
 
     // Set to dark mode
     const themeToggle = page.getByRole('button', { name: /mode/i })
+    await expect(themeToggle).toBeVisible()
     const html = page.locator('html')
     
     // Toggle to dark if not already
     const isDark = await html.evaluate(el => el.classList.contains('dark'))
     if (!isDark) {
+      await expect(themeToggle).toBeEnabled()
       await themeToggle.click()
+      // Wait for theme change to apply
+      await expect(html).toHaveClass(/dark/)
     }
 
     // Reload page
@@ -78,11 +87,15 @@ test.describe('Theme Toggle', () => {
 
     // Set to dark mode
     const themeToggle = page.getByRole('button', { name: /mode/i })
+    await expect(themeToggle).toBeVisible()
     const html = page.locator('html')
     
     const isDark = await html.evaluate(el => el.classList.contains('dark'))
     if (!isDark) {
+      await expect(themeToggle).toBeEnabled()
       await themeToggle.click()
+      // Wait for theme change to apply
+      await expect(html).toHaveClass(/dark/)
     }
 
     // Check that html has dark class applied

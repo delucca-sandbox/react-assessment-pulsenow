@@ -30,6 +30,7 @@ test.describe('News Page', () => {
     // Click a category filter
     const techButton = page.getByRole('button', { name: /technology/i })
     if (await techButton.isVisible()) {
+      await expect(techButton).toBeEnabled()
       await techButton.click()
       
       // Filter should be active - check aria-pressed attribute instead of class

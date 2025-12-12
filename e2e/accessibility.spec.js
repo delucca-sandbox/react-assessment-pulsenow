@@ -47,10 +47,11 @@ test.describe('Accessibility', () => {
 
     // Wait for table to be fully loaded with data
     await expect(page.getByRole('grid')).toBeVisible()
-    await expect(page.locator('tbody tr').first()).toBeVisible()
+    const firstRow = page.locator('tbody tr').first()
+    await expect(firstRow).toBeVisible()
 
     // Open modal
-    const firstRow = page.locator('tbody tr').first()
+    await expect(firstRow).toBeEnabled()
     await firstRow.click()
 
     // Modal should be visible

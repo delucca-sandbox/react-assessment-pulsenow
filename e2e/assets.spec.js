@@ -137,6 +137,7 @@ test.describe('Assets Page', () => {
 
     // Click on Symbol header to sort
     const symbolHeader = page.getByText('Symbol').first()
+    await expect(symbolHeader).toBeVisible()
     await symbolHeader.click()
 
     // Header should show sort indicator
@@ -149,6 +150,7 @@ test.describe('Assets Page', () => {
 
     // Click on first asset row
     const firstRow = page.locator('tbody tr').first()
+    await expect(firstRow).toBeVisible()
     await firstRow.click()
 
     // Modal should open
@@ -160,6 +162,7 @@ test.describe('Assets Page', () => {
 
     // Open modal
     const firstRow = page.locator('tbody tr').first()
+    await expect(firstRow).toBeVisible()
     await firstRow.click()
     await expect(page.getByRole('dialog')).toBeVisible()
 
@@ -176,6 +179,7 @@ test.describe('Assets Page', () => {
 
     // Open modal
     const firstRow = page.locator('tbody tr').first()
+    await expect(firstRow).toBeVisible()
     await firstRow.click()
     await expect(page.getByRole('dialog')).toBeVisible()
 

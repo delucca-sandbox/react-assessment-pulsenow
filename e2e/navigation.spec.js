@@ -56,6 +56,10 @@ test.describe('Navigation', () => {
     const toggleButton = page.getByRole('button', { name: /sidebar/i })
     const sidebar = page.getByTestId('sidebar')
 
+    // Wait for elements to be ready
+    await expect(toggleButton).toBeVisible()
+    await expect(sidebar).toBeVisible()
+
     // Initially expanded
     await expect(sidebar).toHaveAttribute('aria-expanded', 'true')
 
@@ -73,7 +77,12 @@ test.describe('Navigation', () => {
 
     // Collapse sidebar
     const toggleButton = page.getByRole('button', { name: /sidebar/i })
+    await expect(toggleButton).toBeVisible()
     await toggleButton.click()
+
+    // Wait for sidebar to collapse
+    const sidebar = page.getByTestId('sidebar')
+    await expect(sidebar).toHaveAttribute('aria-expanded', 'false')
 
     // Should still be able to navigate
     await page.getByRole('link', { name: /assets/i }).click()
