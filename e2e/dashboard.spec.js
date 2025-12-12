@@ -29,8 +29,8 @@ test.describe('Dashboard Page', () => {
     // Wait for data to load
     await expect(page.getByText('Portfolio Value')).toBeVisible()
 
-    // Should show currency formatted value (e.g., $125,000.50)
-    await expect(page.locator('text=/\\$[\\d,]+\\.\\d{2}/')).toBeVisible()
+    // Should show currency formatted value (e.g., $125,000.50) - use first() to avoid strict mode
+    await expect(page.locator('text=/\\$[\\d,]+\\.\\d{2}/').first()).toBeVisible()
   })
 
   test('displays top gainers with positive change indicators', async ({ page }) => {
@@ -71,7 +71,7 @@ test.describe('Dashboard Page', () => {
     // On slow connections, should show loading skeleton
     // This test verifies the page doesn't crash during loading
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
   })
 })
 

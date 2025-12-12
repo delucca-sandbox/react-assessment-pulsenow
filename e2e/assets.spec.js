@@ -19,13 +19,14 @@ test.describe('Assets Page', () => {
   test('displays assets with all required columns', async ({ page }) => {
     await expect(page.getByRole('grid')).toBeVisible()
 
-    // Check column headers
-    await expect(page.getByText('Symbol')).toBeVisible()
-    await expect(page.getByText('Name')).toBeVisible()
-    await expect(page.getByText('Price')).toBeVisible()
-    await expect(page.getByText('24h Change')).toBeVisible()
-    await expect(page.getByText('Volume')).toBeVisible()
-    await expect(page.getByText('Market Cap')).toBeVisible()
+    // Check column headers - use role columnheader for specificity
+    const headerRow = page.locator('thead tr')
+    await expect(headerRow.getByText('Symbol')).toBeVisible()
+    await expect(headerRow.getByText('Name')).toBeVisible()
+    await expect(headerRow.getByText('Price')).toBeVisible()
+    await expect(headerRow.getByText('24h Change')).toBeVisible()
+    await expect(headerRow.getByText('Volume')).toBeVisible()
+    await expect(headerRow.getByText('Market Cap')).toBeVisible()
   })
 
   test('displays filter controls', async ({ page }) => {
@@ -43,12 +44,8 @@ test.describe('Assets Page', () => {
     const dropdown = page.getByRole('combobox', { name: /filter by asset type/i })
     await dropdown.selectOption('stocks')
 
-    // Should show stocks, not crypto
-    // Wait for filter to apply
-    await page.waitForTimeout(300)
-
     // Verify filter is applied
-    expect(await dropdown.inputValue()).toBe('stocks')
+    await expect(dropdown).toHaveValue('stocks')
   })
 
   test('filters assets by type - crypto only', async ({ page }) => {
@@ -58,11 +55,8 @@ test.describe('Assets Page', () => {
     const dropdown = page.getByRole('combobox', { name: /filter by asset type/i })
     await dropdown.selectOption('crypto')
 
-    // Wait for filter to apply
-    await page.waitForTimeout(300)
-
     // Verify filter is applied
-    expect(await dropdown.inputValue()).toBe('crypto')
+    await expect(dropdown).toHaveValue('crypto')
   })
 
   test('searches assets by symbol', async ({ page }) => {
@@ -72,11 +66,8 @@ test.describe('Assets Page', () => {
     const searchInput = page.getByRole('textbox', { name: /search assets/i })
     await searchInput.fill('AAPL')
 
-    // Wait for search to apply
-    await page.waitForTimeout(300)
-
-    // Should show matching results
-    await expect(page.getByText('AAPL')).toBeVisible()
+    // Should show matching results in the table
+    await expect(page.locator('tbody').getByText('AAPL').first()).toBeVisible()
   })
 
   test('searches assets by name', async ({ page }) => {
@@ -86,11 +77,8 @@ test.describe('Assets Page', () => {
     const searchInput = page.getByRole('textbox', { name: /search assets/i })
     await searchInput.fill('Bitcoin')
 
-    // Wait for search to apply
-    await page.waitForTimeout(300)
-
-    // Should show matching results
-    await expect(page.getByText('Bitcoin')).toBeVisible()
+    // Should show matching results in the table
+    await expect(page.locator('tbody').getByText('Bitcoin').first()).toBeVisible()
   })
 
   test('clears search when X button clicked', async ({ page }) => {

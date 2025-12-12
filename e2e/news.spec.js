@@ -13,7 +13,7 @@ test.describe('News Page', () => {
     await expect(page.getByRole('heading', { name: 'News', level: 1 })).toBeVisible()
 
     // Should show news articles
-    await expect(page.locator('article, [class*="NewsCard"], .grid > div').first()).toBeVisible()
+    await expect(page.locator('article').first()).toBeVisible()
   })
 
   test('displays category filter buttons', async ({ page }) => {
@@ -22,18 +22,18 @@ test.describe('News Page', () => {
   })
 
   test('filters news by category', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'News' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'News', level: 1 })).toBeVisible()
 
-    // Wait for content to load
-    await page.waitForTimeout(500)
+    // Wait for filter buttons to load
+    await expect(page.getByRole('button', { name: /all/i })).toBeVisible()
 
     // Click a category filter
     const techButton = page.getByRole('button', { name: /technology/i })
     if (await techButton.isVisible()) {
       await techButton.click()
       
-      // Filter should be active
-      await expect(techButton).toHaveClass(/bg-pulse-primary|bg-indigo/)
+      // Filter should be active - check aria-pressed attribute instead of class
+      await expect(techButton).toHaveAttribute('aria-pressed', 'true')
     }
   })
 
@@ -42,14 +42,19 @@ test.describe('News Page', () => {
   })
 
   test('displays news with category badges', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'News' })).toBeVisible()
+    // Wait for page heading (h1 specifically)
+    await expect(page.getByRole('heading', { name: 'News', level: 1 })).toBeVisible()
 
-    // Wait for content
-    await page.waitForTimeout(500)
+    // Wait for article count text to appear (indicates data has loaded)
+    await expect(page.getByText(/\d+ articles?/)).toBeVisible()
 
-    // Should show category badges on news items
-    const categoryBadges = page.locator('.capitalize, [class*="badge"]')
-    await expect(categoryBadges.first()).toBeVisible()
+    // Wait for news articles to load
+    const articles = page.locator('article')
+    await expect(articles.first()).toBeVisible()
+
+    // Should show category badges on news items (category badges have capitalize class)
+    const categoryBadge = articles.first().locator('.capitalize').first()
+    await expect(categoryBadge).toBeVisible()
   })
 
   test('shows last updated timestamp', async ({ page }) => {

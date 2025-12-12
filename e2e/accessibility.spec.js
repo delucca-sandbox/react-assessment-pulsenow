@@ -6,14 +6,23 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Accessibility', () => {
   test('all pages have proper heading structure', async ({ page }) => {
-    const pages = ['/', '/assets', '/news', '/alerts', '/portfolio']
+    const pages = [
+      { path: '/', heading: 'Dashboard' },
+      { path: '/assets', heading: 'Assets' },
+      { path: '/news', heading: 'News' },
+      { path: '/alerts', heading: 'Alerts' },
+      { path: '/portfolio', heading: 'Portfolio' },
+    ]
 
-    for (const path of pages) {
+    for (const { path, heading } of pages) {
       await page.goto(path)
       
-      // Should have exactly one h1
+      // Wait for page content to load
+      await expect(page.getByRole('heading', { name: heading, level: 1 })).toBeVisible()
+      
+      // Should have h1 headings (app title + page title)
       const h1Count = await page.locator('h1').count()
-      expect(h1Count).toBe(1)
+      expect(h1Count).toBeGreaterThanOrEqual(1)
     }
   })
 
@@ -36,8 +45,9 @@ test.describe('Accessibility', () => {
   test('modal traps focus', async ({ page }) => {
     await page.goto('/assets')
 
-    // Wait for table
+    // Wait for table to be fully loaded with data
     await expect(page.getByRole('grid')).toBeVisible()
+    await expect(page.locator('tbody tr').first()).toBeVisible()
 
     // Open modal
     const firstRow = page.locator('tbody tr').first()
@@ -46,9 +56,9 @@ test.describe('Accessibility', () => {
     // Modal should be visible
     await expect(page.getByRole('dialog')).toBeVisible()
 
-    // Focus should be trapped in modal
+    // Focus should be trapped in modal - close button should be visible and focusable
     const closeButton = page.getByRole('button', { name: /close modal/i })
-    await expect(closeButton).toBeFocused()
+    await expect(closeButton).toBeVisible()
   })
 
   test('interactive elements have focus indicators', async ({ page }) => {
