@@ -137,7 +137,7 @@ Execution steps:
     - Maintain in-memory representation of the spec (loaded once at start) plus the raw file contents.
     - For the first integrated answer in this invocation:
        - Ensure a `## Clarifications` section exists. Insertion anchor order (use first match): (a) immediately after `## Overview` if present, (b) immediately after the first H2 heading in the document, (c) immediately after the frontmatter/title block if present, or (d) at the beginning of the content if no other anchor found.
-       - Under it, create (if not present) a `### Session YYYY-MM-DD` subheading for today (use local date in ISO-8601 format YYYY-MM-DD).
+       - Under it, create (if not present) a `### Session YYYY-MM-DD` subheading for today (use the agent runner's local system date in ISO-8601 format YYYY-MM-DD; this should be the date in the timezone where the clarification agent is executing).
        - Track cumulative question count across all sessions to enforce the 10-question lifecycle cap.
     - Append a bullet line immediately after acceptance: `- Q: <question> → A: <final answer>`.
     - Then immediately apply the clarification to the most appropriate section(s):
@@ -145,7 +145,7 @@ Execution steps:
        - User interaction / actor distinction → Update User Stories or Actors subsection (if present) with clarified role, constraint, or scenario.
        - Data shape / entities → Update Data Model (add fields, types, relationships) preserving ordering; note added constraints succinctly.
        - Non-functional constraint → Add/modify measurable criteria in Non-Functional / Quality Attributes section (convert vague adjective to metric or explicit target).
-       - Edge case / negative flow → Add a new bullet under Edge Cases / Error Handling (or create such subsection if template provides placeholder for it).
+       - Edge case / negative flow → Add a new bullet under an existing Edge Cases / Error Handling section (do not create new headings unless the spec already contains a placeholder heading to populate).
        - Terminology conflict → Normalize term across spec; retain original only if necessary by adding `(formerly referred to as "X")` once.
     - If the clarification invalidates an earlier ambiguous statement, replace that statement instead of duplicating; leave no obsolete contradictory text.
     - Save the spec file AFTER each integration to minimize risk of context loss (atomic overwrite). For atomic write: create a temporary file in the same directory as the spec, write the updated content to it, optionally fsync the temp file, then rename/move it to replace the original spec file (rename is atomic on POSIX systems).
@@ -160,7 +160,7 @@ Execution steps:
    - Total questions across all sessions (lifecycle) ≤ 10.
    - Updated sections contain no lingering vague placeholders the new answer was meant to resolve.
    - No contradictory earlier statement remains (scan for now-invalid alternatives removed).
-   - Markdown structure valid; only allowed new headings: `## Clarifications`, `### Session YYYY-MM-DD`.
+   - Markdown structure valid; only allowed *new* headings are `## Clarifications`, `### Session YYYY-MM-DD` (existing sections may be populated/edited, but avoid introducing additional headings unless a placeholder heading already exists in the spec).
    - Terminology consistency: same canonical term used across all updated sections.
 
 7. Final validation only (no additional write; validation only):

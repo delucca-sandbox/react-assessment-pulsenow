@@ -53,7 +53,8 @@ SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
 # Get all paths and variables from common functions
-eval "$(get_feature_paths)"
+# shellcheck disable=SC1090
+source <(get_feature_paths)
 
 NEW_PLAN="$IMPL_PLAN"  # Alias for compatibility with existing code
 AGENT_TYPE="${1:-}"
@@ -107,9 +108,12 @@ log_warning() {
 
 # Escape special characters for sed replacement strings
 # Escapes: backslash, forward slash, ampersand, pipe, and newlines
+# Also flattens literal newlines to '\n' so sed replacement stays single-line
 escape_for_sed() {
-    # Escape backslash first, then other special chars
-    printf '%s' "$1" | sed -e 's/[\\]/\\\\/g' -e 's/[\/&|]/\\&/g'
+    # Escape backslash first, then other special chars, then flatten newlines
+    printf '%s' "$1" \
+      | tr '\n' '\r' \
+      | sed -e 's/[\\]/\\\\/g' -e 's/[\/&|]/\\&/g' -e 's/\r/\\n/g'
 }
 
 # Track temporary files for cleanup
@@ -428,6 +432,11 @@ update_existing_agent_file() {
         new_change_entry="- $CURRENT_BRANCH: Added $NEW_DB"
     fi
     
+    # Idempotency: don't re-add the same change entry
+    if [[ -n "$new_change_entry" ]] && grep -Fq -- "$new_change_entry" "$target_file" 2>/dev/null; then
+        new_change_entry=""
+    fi
+    
     # Check if sections exist in the file
     local has_active_technologies=0
     local has_recent_changes=0
@@ -675,6 +684,9 @@ update_specific_agent() {
 update_all_existing_agents() {
     local found_agent=false
     
+    # Track which files we've already updated to avoid duplicates
+    declare -A seen_targets=()
+    
     # Define agent configurations: "file_path:agent_name"
     declare -a AGENT_CONFIGS=(
         "$CLAUDE_FILE:Claude Code"
@@ -694,10 +706,11 @@ update_all_existing_agents() {
         "$BOB_FILE:IBM Bob"
     )
     
-    # Check each possible agent file and update if it exists
+    # Check each possible agent file and update if it exists (and not already updated)
     for agent_config in "${AGENT_CONFIGS[@]}"; do
         IFS=':' read -r agent_file agent_name <<< "$agent_config"
-        if [[ -f "$agent_file" ]]; then
+        if [[ -f "$agent_file" ]] && [[ -z "${seen_targets[$agent_file]+x}" ]]; then
+            seen_targets[$agent_file]=1
             update_agent_file "$agent_file" "$agent_name"
             found_agent=true
         fi

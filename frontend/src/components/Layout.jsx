@@ -67,12 +67,10 @@ const Layout = ({ children }) => {
       <div className="flex">
         {/* Sidebar */}
         <aside 
-          id="sidebar-nav"
           data-testid="sidebar"
           className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-[calc(100vh-4rem)] transition-all duration-300`}
-          aria-label="Main navigation"
         >
-          <nav className="p-4">
+          <nav id="sidebar-nav" aria-label="Main navigation" className="p-4">
             <ul className="space-y-2" role="list">
               {NAVIGATION.map((item) => (
                 <li key={item.path}>
@@ -80,7 +78,7 @@ const Layout = ({ children }) => {
                     to={item.path}
                     end={item.path === '/'}
                     className={({ isActive }) =>
-                      `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-pulse-primary ${
+                      `flex items-center ${sidebarOpen ? 'space-x-3 px-4' : 'justify-center px-2'} py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-pulse-primary ${
                         isActive
                           ? 'bg-pulse-primary text-white'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
