@@ -22,7 +22,7 @@ Note: This clarification workflow is expected to run (and be completed) BEFORE i
 
 Execution steps:
 
-1. Run `.specify/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root **once** (combined `--json --paths-only` mode / `-Json -PathsOnly`). Parse minimal JSON payload fields:
+1. Run `.specify/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root **once** (combined `--json --paths-only` mode for bash). Parse minimal JSON payload fields:
    - `FEATURE_DIR`
    - `FEATURE_SPEC`
    - (Optionally capture `IMPL_PLAN`, `TASKS` for future chained flows.)
@@ -137,7 +137,7 @@ Execution steps:
     - Maintain in-memory representation of the spec (loaded once at start) plus the raw file contents.
     - For the first integrated answer in this invocation:
        - Ensure a `## Clarifications` section exists. Insertion anchor order (use first match): (a) immediately after `## Overview` if present, (b) immediately after the first H2 heading in the document, (c) immediately after the frontmatter/title block if present, or (d) at the beginning of the content if no other anchor found.
-       - Under it, create (if not present) a `### Session YYYY-MM-DD` subheading for today.
+       - Under it, create (if not present) a `### Session YYYY-MM-DD` subheading for today (use local date in ISO-8601 format YYYY-MM-DD).
        - Track cumulative question count across all sessions to enforce the 10-question lifecycle cap.
     - Append a bullet line immediately after acceptance: `- Q: <question> → A: <final answer>`.
     - Then immediately apply the clarification to the most appropriate section(s):
@@ -186,4 +186,4 @@ Behavior rules:
 - If no questions asked due to full coverage, output a compact coverage summary (all categories Clear) then suggest advancing.
 - If quota reached with unresolved high-impact categories remaining, explicitly flag them under Deferred with rationale.
 
-Context for prioritization: $ARGUMENTS
+Context for prioritization: `$ARGUMENTS`

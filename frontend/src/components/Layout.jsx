@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { useState, useCallback } from 'react'
 import MetaMaskButton from './MetaMaskButton'
 import ThemeToggle from './ThemeToggle'
@@ -17,7 +17,6 @@ const NAVIGATION = [
  * @param {React.ReactNode} props.children - Page content to render in main area
  */
 const Layout = ({ children }) => {
-  const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const toggleSidebar = useCallback(() => {

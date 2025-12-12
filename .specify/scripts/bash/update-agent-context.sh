@@ -432,11 +432,11 @@ update_existing_agent_file() {
     local has_active_technologies=0
     local has_recent_changes=0
     
-    if grep -q "^## Active Technologies" "$target_file" 2>/dev/null; then
+    if grep -Fq -- "## Active Technologies" "$target_file" 2>/dev/null; then
         has_active_technologies=1
     fi
     
-    if grep -q "^## Recent Changes" "$target_file" 2>/dev/null; then
+    if grep -Fq -- "## Recent Changes" "$target_file" 2>/dev/null; then
         has_recent_changes=1
     fi
     
