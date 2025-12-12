@@ -54,7 +54,13 @@ source "$SCRIPT_DIR/common.sh"
 
 # Get all paths and variables from common functions
 # shellcheck disable=SC1090
-source <(get_feature_paths)
+# Validate branch name before sourcing to prevent injection
+_tmp_paths=$(get_feature_paths)
+if ! grep -E "^CURRENT_BRANCH='[0-9]{3}-[A-Za-z0-9._/-]+'\$" <<< "$_tmp_paths" >/dev/null 2>&1; then
+    log_error "Invalid branch name; expected format: NNN-feature-name"
+    exit 1
+fi
+source <(echo "$_tmp_paths")
 
 NEW_PLAN="$IMPL_PLAN"  # Alias for compatibility with existing code
 AGENT_TYPE="${1:-}"
