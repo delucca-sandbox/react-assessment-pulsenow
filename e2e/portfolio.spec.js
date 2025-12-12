@@ -14,11 +14,11 @@ test.describe('Portfolio Page', () => {
   })
 
   test('displays portfolio summary section', async ({ page }) => {
-    await expect(page.getByText('Portfolio Summary')).toBeVisible()
+    await expect(page.getByRole('region', { name: /portfolio summary/i })).toBeVisible()
   })
 
   test('displays asset allocation section', async ({ page }) => {
-    await expect(page.getByText('Asset Allocation')).toBeVisible()
+    await expect(page.getByRole('region', { name: /asset allocation/i })).toBeVisible()
   })
 
   test('displays holdings section', async ({ page }) => {
@@ -30,7 +30,8 @@ test.describe('Portfolio Page', () => {
   })
 
   test('displays portfolio total value', async ({ page }) => {
-    // Should show formatted currency value - use first() to avoid strict mode
+    // Wait for portfolio summary section then check for currency value
+    await expect(page.getByText(/Portfolio Value|Portfolio Summary/i)).toBeVisible()
     await expect(page.locator('text=/\\$[\\d,]+/').first()).toBeVisible()
   })
 
@@ -43,14 +44,15 @@ test.describe('Portfolio Page', () => {
   })
 
   test('shows last updated timestamp', async ({ page }) => {
-    await expect(page.getByText(/updated/i)).toBeVisible()
+    await expect(page.getByText(/^Last updated\b/i)).toBeVisible()
   })
 
   test('displays allocation chart', async ({ page }) => {
+    // Wait for allocation section
     await expect(page.getByText('Asset Allocation')).toBeVisible()
 
-    // Recharts renders SVG elements - wait for chart to render
-    const chartContainer = page.locator('.recharts-wrapper, svg').first()
+    // Recharts renders SVG elements - wait for chart wrapper specifically
+    const chartContainer = page.locator('.recharts-wrapper').first()
     await expect(chartContainer).toBeVisible()
   })
 })

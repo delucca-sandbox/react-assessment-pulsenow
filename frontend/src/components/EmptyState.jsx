@@ -14,7 +14,6 @@ const EmptyState = ({
   return (
     <div 
       className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center border border-gray-200 dark:border-gray-700"
-      role="status"
       aria-label={title}
     >
       <div className="flex flex-col items-center">

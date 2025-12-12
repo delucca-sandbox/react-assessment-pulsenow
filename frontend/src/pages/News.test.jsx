@@ -88,6 +88,7 @@ describe('News Page', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Apple Announces New Product Line')).toBeInTheDocument()
+        expect(screen.getByText('Bitcoin Reaches New Monthly High')).toBeInTheDocument()
       })
 
       // Click on technology filter
@@ -95,7 +96,10 @@ describe('News Page', () => {
       fireEvent.click(techButton)
 
       await waitFor(() => {
+        // Technology article should still be visible
         expect(screen.getByText('Apple Announces New Product Line')).toBeInTheDocument()
+        // Crypto article should be filtered out
+        expect(screen.queryByText('Bitcoin Reaches New Monthly High')).not.toBeInTheDocument()
       })
     })
   })

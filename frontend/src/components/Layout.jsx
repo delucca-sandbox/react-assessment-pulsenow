@@ -69,6 +69,8 @@ const Layout = ({ children }) => {
         {/* Sidebar */}
         <aside 
           id="sidebar-nav"
+          data-testid="sidebar"
+          aria-expanded={sidebarOpen}
           className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-[calc(100vh-4rem)] transition-all duration-300`}
           aria-label="Main navigation"
         >

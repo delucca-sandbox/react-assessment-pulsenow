@@ -3,7 +3,7 @@
 **Input**: Design documents from `/.specify/specs/001-pulse-frontend-pages/`
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/api-types.ts ✅
 
-**Tests**: Manual testing only (no automated tests specified)
+**Tests**: Unit tests (Vitest/RTL) and E2E tests (Playwright) — CI automated
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 

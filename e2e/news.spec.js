@@ -52,9 +52,9 @@ test.describe('News Page', () => {
     const articles = page.locator('article')
     await expect(articles.first()).toBeVisible()
 
-    // Should show category badges on news items (category badges have capitalize class)
-    const categoryBadge = articles.first().locator('.capitalize').first()
-    await expect(categoryBadge).toBeVisible()
+    // Should show category badges (look for badge with capitalize class containing category name)
+    const categoryBadge = articles.first().locator('.capitalize').filter({ hasText: /technology|macro|crypto|earnings|regulatory|market/i })
+    await expect(categoryBadge.first()).toBeVisible()
   })
 
   test('shows last updated timestamp', async ({ page }) => {

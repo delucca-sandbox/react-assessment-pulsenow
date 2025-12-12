@@ -172,7 +172,7 @@ Favor simple, working solutions over complex or over-engineered implementations.
 
 ### File Organization
 
-```
+```text
 frontend/src/
 ├── components/     # Reusable UI components
 ├── pages/          # Route page components
@@ -201,7 +201,7 @@ frontend/src/
 
 1. Start with the component skeleton and data fetching
 2. Add loading state immediately
-3. Add error handling immediately
+3. Add error handling
 4. Implement the happy path UI
 5. Handle edge cases (empty data, null values)
 6. Apply consistent styling

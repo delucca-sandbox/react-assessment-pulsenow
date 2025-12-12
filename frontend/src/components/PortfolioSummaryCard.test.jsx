@@ -17,19 +17,19 @@ describe('PortfolioSummaryCard', () => {
     it('renders portfolio value correctly formatted', () => {
       render(<PortfolioSummaryCard portfolio={mockPortfolio} />)
 
-      expect(screen.getByText('$125,000.50')).toBeInTheDocument()
+      expect(screen.getByTestId('portfolio-value')).toHaveTextContent('$125,000.50')
     })
 
     it('renders total change amount correctly', () => {
       render(<PortfolioSummaryCard portfolio={mockPortfolio} />)
 
-      expect(screen.getByText('$2,500.25')).toBeInTheDocument()
+      expect(screen.getByTestId('portfolio-change-amount')).toHaveTextContent('$2,500.25')
     })
 
     it('renders change percentage correctly', () => {
       render(<PortfolioSummaryCard portfolio={mockPortfolio} />)
 
-      expect(screen.getByText('+2.04%')).toBeInTheDocument()
+      expect(screen.getByTestId('portfolio-change-percent')).toHaveTextContent('+2.04%')
     })
 
     it('renders Portfolio Value label', () => {

@@ -4,6 +4,14 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor } from '../../test/test-utils'
+
+// Mock the API module BEFORE importing the component
+vi.mock('../services/api', () => ({
+  getPortfolio: vi.fn()
+}))
+
+// Import the mocked module
+import * as api from '../services/api'
 import Portfolio from './Portfolio'
 
 // Mock data - matching what HoldingsTable expects
@@ -38,14 +46,6 @@ const mockPortfolio = {
     }
   ]
 }
-
-// Mock the API module
-vi.mock('../services/api', () => ({
-  getPortfolio: vi.fn()
-}))
-
-// Import the mocked module
-import * as api from '../services/api'
 
 describe('Portfolio Page', () => {
   beforeEach(() => {

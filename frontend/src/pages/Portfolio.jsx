@@ -12,6 +12,34 @@ import LastUpdated from '../components/LastUpdated'
 // Auto-refresh interval: 30 seconds
 const REFRESH_INTERVAL = 30000
 
+// Portfolio loading skeleton component
+const PortfolioSkeleton = () => (
+  <div className="space-y-6">
+    {/* Summary Cards Skeleton */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <SkeletonCard key={i} />
+      ))}
+    </div>
+
+    {/* Chart Skeleton */}
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+      <LoadingSkeleton className="h-6 w-40 mb-4" />
+      <LoadingSkeleton className="h-[300px] w-full" />
+    </div>
+
+    {/* Table Skeleton */}
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+      <LoadingSkeleton className="h-6 w-32 mb-4" />
+      <div className="space-y-3">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <LoadingSkeleton key={i} className="h-12 w-full" />
+        ))}
+      </div>
+    </div>
+  </div>
+)
+
 /**
  * Portfolio - Page displaying portfolio value, allocation chart, and holdings table
  */
@@ -49,40 +77,15 @@ const Portfolio = () => {
     return { allocation, performance }
   }, [portfolio])
 
-  // Loading skeleton
-  const LoadingSkeleton_Portfolio = () => (
-    <div className="space-y-6">
-      {/* Summary Cards Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <SkeletonCard key={i} />
-        ))}
-      </div>
-
-      {/* Chart Skeleton */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-        <LoadingSkeleton className="h-6 w-40 mb-4" />
-        <LoadingSkeleton className="h-[300px] w-full" />
-      </div>
-
-      {/* Table Skeleton */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-        <LoadingSkeleton className="h-6 w-32 mb-4" />
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <LoadingSkeleton key={i} className="h-12 w-full" />
-          ))}
-        </div>
-      </div>
-    </div>
-  )
 
   // Loading state
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Portfolio</h1>
-        <LoadingSkeleton_Portfolio />
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Portfolio</h1>
+        </div>
+        <PortfolioSkeleton />
       </div>
     )
   }

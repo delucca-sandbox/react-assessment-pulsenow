@@ -22,6 +22,11 @@ const AlertSection = ({ severity, alerts = [], defaultExpanded }) => {
   const [isExpanded, setIsExpanded] = useState(isDefaultExpanded)
 
   const severityClasses = getSeverityClasses(severity)
+  
+  // Extract specific class types for more maintainable composition
+  const allClasses = severityClasses.split(' ')
+  const borderClasses = allClasses.filter(c => c.startsWith('border-')).join(' ')
+  const textClasses = allClasses.filter(c => c.startsWith('text-') && !c.includes('dark:')).join(' ')
 
   const handleToggle = () => {
     setIsExpanded(prev => !prev)
@@ -40,7 +45,7 @@ const AlertSection = ({ severity, alerts = [], defaultExpanded }) => {
       <button
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
-        className={`w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pulse-primary ${severityClasses.split(' ').filter(c => c.startsWith('border-')).join(' ')}`}
+        className={`w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pulse-primary ${borderClasses}`}
         aria-expanded={isExpanded}
         aria-controls={`alerts-${severity}`}
       >
@@ -62,7 +67,7 @@ const AlertSection = ({ severity, alerts = [], defaultExpanded }) => {
           </span>
 
           {/* Severity Label */}
-          <span className={`font-semibold text-lg ${severityClasses.split(' ').filter(c => c.startsWith('text-')).join(' ')}`}>
+          <span className={`font-semibold text-lg ${textClasses}`}>
             {config.label}
           </span>
         </div>

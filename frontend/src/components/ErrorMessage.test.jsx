@@ -35,7 +35,8 @@ describe('ErrorMessage', () => {
     it('renders error icon', () => {
       render(<ErrorMessage message="Test error" />)
 
-      const svg = document.querySelector('svg')
+      const errorContainer = screen.getByRole('alert')
+      const svg = errorContainer.querySelector('svg')
       expect(svg).toBeInTheDocument()
     })
   })

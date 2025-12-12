@@ -245,7 +245,7 @@ As a market investor, I want data to refresh automatically so that I always see 
 ### Technical Constraints
 
 - **State Management**: Native React hooks (useState, useEffect) with custom useDataFetch hook for server state (API data, caching, auto-refresh); React Context for UI state (theme, local preferences)
-- **Caching Strategy**: Custom useDataFetch hook handles data caching and background refetching (30-second interval per FR-032)
+- **Caching Strategy**: Custom useDataFetch hook handles data caching and background refetching (30-second interval per FR-032). Note: Current implementation uses component-level state caching; for cross-page persistence to fully satisfy FR-040, consider extending to Context-based or module-level cache storage, or integrating a client-side caching library (React Query/SWR) in future iterations.
 - **Charting**: Recharts library for price history charts and portfolio allocation pie chart
 
 ### Integration & External Dependencies

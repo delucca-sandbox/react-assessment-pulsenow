@@ -4,7 +4,6 @@
  * These TypeScript interfaces define the shape of data returned by the backend API.
  * Use for documentation reference - the frontend uses JavaScript (not TypeScript).
  * 
- * Generated: 2025-12-11
  * Source: Backend mock data analysis
  */
 

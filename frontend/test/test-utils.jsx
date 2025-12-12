@@ -3,7 +3,7 @@
  * Wraps components with necessary providers for testing
  */
 import { render } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom'
 import { ThemeProvider } from '../src/context/ThemeContext'
 
 /**
@@ -15,14 +15,11 @@ import { ThemeProvider } from '../src/context/ThemeContext'
 const customRender = (ui, options = {}) => {
   const { route = '/', ...renderOptions } = options
 
-  // Set initial route
-  window.history.pushState({}, 'Test page', route)
-
   const AllProviders = ({ children }) => (
     <ThemeProvider>
-      <BrowserRouter>
+      <MemoryRouter initialEntries={[route]}>
         {children}
-      </BrowserRouter>
+      </MemoryRouter>
     </ThemeProvider>
   )
 
@@ -33,8 +30,9 @@ const customRender = (ui, options = {}) => {
  * Render without providers (for isolated component testing)
  */
 const renderWithRouter = (ui, { route = '/' } = {}) => {
-  window.history.pushState({}, 'Test page', route)
-  return render(ui, { wrapper: BrowserRouter })
+  return render(ui, { 
+    wrapper: ({ children }) => <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+  })
 }
 
 // Re-export everything from testing-library

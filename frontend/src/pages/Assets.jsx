@@ -31,6 +31,8 @@ const Assets = () => {
   
   // Ref to track component mount state for async operations
   const isMountedRef = useRef(true)
+  // Ref to track request ID and prevent stale responses
+  const detailRequestIdRef = useRef(0)
   
   useEffect(() => {
     isMountedRef.current = true
@@ -91,19 +93,26 @@ const Assets = () => {
 
     // Apply sorting
     combined.sort((a, b) => {
-      let aVal = a[sortBy]
-      let bVal = b[sortBy]
-      
-      // Handle string sorting
-      if (typeof aVal === 'string') {
-        aVal = aVal.toLowerCase()
-        bVal = bVal.toLowerCase()
+      let aVal = a?.[sortBy]
+      let bVal = b?.[sortBy]
+
+      // Push null/undefined to the end
+      const aNil = aVal == null
+      const bNil = bVal == null
+      if (aNil && bNil) return 0
+      if (aNil) return sortOrder === 'asc' ? 1 : -1
+      if (bNil) return sortOrder === 'asc' ? -1 : 1
+
+      // Normalize for string compare
+      const aIsStr = typeof aVal === 'string'
+      const bIsStr = typeof bVal === 'string'
+      if (aIsStr || bIsStr) {
+        aVal = String(aVal).toLowerCase()
+        bVal = String(bVal).toLowerCase()
       }
-      
-      if (sortOrder === 'asc') {
-        return aVal > bVal ? 1 : -1
-      }
-      return aVal < bVal ? 1 : -1
+
+      const cmp = aVal > bVal ? 1 : aVal < bVal ? -1 : 0
+      return sortOrder === 'asc' ? cmp : -cmp
     })
 
     return combined
@@ -121,26 +130,28 @@ const Assets = () => {
 
   // Handle asset click - fetch detailed data and open modal
   const handleAssetClick = useCallback(async (asset) => {
+    const requestId = ++detailRequestIdRef.current
     setSelectedAsset(asset)
     setModalOpen(true)
     setLoadingDetail(true)
+    setDetailedAsset(null)
     
     try {
       const response = asset.type === 'stock' 
         ? await getStock(asset.symbol)
         : await getCryptoBySymbol(asset.symbol)
       
-      // Only update state if component is still mounted
-      if (isMountedRef.current) {
+      // Only update state if component is still mounted and this is the latest request
+      if (isMountedRef.current && detailRequestIdRef.current === requestId) {
         setDetailedAsset(response.data.data || response.data)
       }
     } catch {
       // If detailed fetch fails, just show basic asset data
-      if (isMountedRef.current) {
+      if (isMountedRef.current && detailRequestIdRef.current === requestId) {
         setDetailedAsset(asset)
       }
     } finally {
-      if (isMountedRef.current) {
+      if (isMountedRef.current && detailRequestIdRef.current === requestId) {
         setLoadingDetail(false)
       }
     }
@@ -182,7 +193,7 @@ const Assets = () => {
     )
   }
 
-  // Error state
+  // Error state - only show full error if both sources failed
   if (error && !stocksData && !cryptoData) {
     return (
       <div className="space-y-6">
@@ -208,6 +219,34 @@ const Assets = () => {
           <LastUpdated timestamp={lastUpdated} />
         </div>
       </div>
+
+      {/* Partial failure warnings */}
+      {(stocksError && cryptoData) && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-sm">
+          <p className="text-yellow-800 dark:text-yellow-200">
+            ⚠️ Unable to load stock data. Showing cryptocurrency data only.
+            <button 
+              onClick={refetchStocks}
+              className="ml-2 underline hover:no-underline"
+            >
+              Retry
+            </button>
+          </p>
+        </div>
+      )}
+      {(cryptoError && stocksData) && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-sm">
+          <p className="text-yellow-800 dark:text-yellow-200">
+            ⚠️ Unable to load cryptocurrency data. Showing stock data only.
+            <button 
+              onClick={refetchCrypto}
+              className="ml-2 underline hover:no-underline"
+            >
+              Retry
+            </button>
+          </p>
+        </div>
+      )}
 
       {/* Filters */}
       <AssetsFilter

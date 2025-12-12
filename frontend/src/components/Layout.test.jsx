@@ -29,11 +29,8 @@ describe('Layout', () => {
     it('renders theme toggle', () => {
       render(<Layout><div>Content</div></Layout>)
 
-      // Theme toggle button should be present
-      const buttons = screen.getAllByRole('button')
-      const themeButton = buttons.find(btn => 
-        btn.getAttribute('aria-label')?.includes('mode')
-      )
+      // Theme toggle button should be present with mode in label
+      const themeButton = screen.getByRole('button', { name: /mode/i })
       expect(themeButton).toBeInTheDocument()
     })
   })
@@ -90,7 +87,7 @@ describe('Layout', () => {
       render(<Layout><div>Content</div></Layout>)
 
       const toggleButton = screen.getByRole('button', { name: /collapse sidebar/i })
-      const sidebar = document.getElementById('sidebar-nav')
+      const sidebar = screen.getByLabelText('Main navigation')
 
       // Initially expanded
       expect(sidebar.className).toContain('w-64')

@@ -2,8 +2,15 @@
  * LoadingSkeleton - Animated placeholder component for loading states
  * @param {string} className - Additional Tailwind classes for dimensions
  * @param {string} variant - Shape variant: 'rectangle' | 'circle' | 'text'
+ * @param {boolean} aria-hidden - Whether to hide from screen readers (default: true)
+ * @param {string} role - ARIA role override (use only at container level)
  */
-const LoadingSkeleton = ({ className = '', variant = 'rectangle' }) => {
+const LoadingSkeleton = ({ 
+  className = '', 
+  variant = 'rectangle',
+  'aria-hidden': ariaHidden = true,
+  role
+}) => {
   const baseClasses = 'animate-pulse bg-gray-200 dark:bg-gray-700'
   
   const variantClasses = {
@@ -12,11 +19,14 @@ const LoadingSkeleton = ({ className = '', variant = 'rectangle' }) => {
     text: 'rounded h-4'
   }
 
+  // Validate variant to prevent invalid classes
+  const resolvedVariant = variantClasses[variant] ? variant : 'rectangle'
+
   return (
     <div 
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-      role="status"
-      aria-label="Loading..."
+      className={`${baseClasses} ${variantClasses[resolvedVariant]} ${className}`}
+      aria-hidden={ariaHidden}
+      role={role}
     />
   )
 }

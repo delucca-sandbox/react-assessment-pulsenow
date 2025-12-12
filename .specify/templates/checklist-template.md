@@ -17,6 +17,10 @@
   - Implementation details from tasks.md
   
   DO NOT keep these sample items in the generated checklist file.
+  
+  CRITICAL: The CHK001+ identifiers below are PLACEHOLDERS. You MUST generate
+  unique checklist IDs for each new checklist to avoid CHK ID collisions across
+  different features. Do not copy/paste these sample IDs unchanged.
   ============================================================================
 -->
 

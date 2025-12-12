@@ -54,7 +54,11 @@ test.describe('Accessibility', () => {
     await firstRow.click()
 
     // Modal should be visible
-    await expect(page.getByRole('dialog')).toBeVisible()
+    const modal = page.getByRole('dialog')
+    await expect(modal).toBeVisible()
+    
+    // Wait for modal content to load
+    await expect(modal).toContainText(/.+/)
 
     // Focus should be trapped in modal - close button should be visible and focusable
     const closeButton = page.getByRole('button', { name: /close modal/i })

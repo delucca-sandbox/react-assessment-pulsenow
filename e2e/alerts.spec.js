@@ -27,21 +27,26 @@ test.describe('Alerts Page', () => {
     await expect(page.getByText(/\d+ alerts?/)).toBeVisible()
   })
 
-  test('shows critical count when present', async ({ page }) => {
-    // May or may not have critical alerts
-    // Just check page loads, critical count is optional
-    await expect(page.getByRole('heading', { name: 'Alerts', level: 1 })).toBeVisible()
-  })
-
-  test('displays severity badges with correct colors', async ({ page }) => {
+  test('displays severity sections with counts', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Alerts', level: 1 })).toBeVisible()
 
     // Wait for alerts list to load
     await expect(page.getByRole('list', { name: /alerts/i })).toBeVisible()
 
-    // Should show colored severity badges
-    const severityBadges = page.locator('[class*="bg-red"], [class*="bg-orange"], [class*="bg-yellow"], [class*="bg-blue"]')
-    await expect(severityBadges.first()).toBeVisible()
+    // Should show severity labels (Critical, High, Medium, or Low)
+    const severityLabels = page.getByText(/^(Critical|High|Medium|Low)$/)
+    await expect(severityLabels.first()).toBeVisible()
+  })
+
+  test('displays severity badges with semantic labels', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: 'Alerts', level: 1 })).toBeVisible()
+
+    // Wait for alerts list to load
+    await expect(page.getByRole('list', { name: /alerts/i })).toBeVisible()
+
+    // Should show severity section buttons with counts
+    const severityButtons = page.getByRole('button').filter({ hasText: /Critical|High|Medium|Low/ })
+    await expect(severityButtons.first()).toBeVisible()
   })
 
   test('shows last updated timestamp', async ({ page }) => {

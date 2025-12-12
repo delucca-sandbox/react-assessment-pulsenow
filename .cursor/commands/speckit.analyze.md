@@ -68,7 +68,7 @@ Load only the minimal necessary context from each artifact:
 
 Create internal representations (do not include raw artifacts in output):
 
-- **Requirements inventory**: Each functional + non-functional requirement with a stable key (derive slug based on imperative phrase; e.g., "User can upload file" → `user-can-upload-file`)
+- **Requirements inventory**: Each functional + non-functional requirement with a stable key. If the spec already contains stable identifiers (e.g., FR-001, NFR-A11Y-002), use those as keys. Otherwise, derive a slug based on the imperative phrase (e.g., "User can upload file" → `user-can-upload-file`). Prefer existing IDs to prevent key collisions and improve traceability.
 - **User story/action inventory**: Discrete user actions with acceptance criteria
 - **Task coverage mapping**: Map each task to one or more requirements or stories (inference by keyword / explicit reference patterns like IDs or key phrases)
 - **Constitution rule set**: Extract principle names and MUST/SHOULD normative statements

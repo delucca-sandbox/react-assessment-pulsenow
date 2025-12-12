@@ -177,7 +177,7 @@ Given that feature description, do this:
            **Your choice**: _[Wait for user response]_
            ```
 
-        4. **CRITICAL - Table Formatting**: Ensure markdown tables are properly formatted:
+        4. **CRITICAL - Table Formatting**: Ensure Markdown tables are properly formatted:
            - Use consistent spacing with pipes aligned
            - Each cell should have spaces around content: `| Content |` not `|Content|`
            - Header separator must have at least 3 dashes: `|--------|`

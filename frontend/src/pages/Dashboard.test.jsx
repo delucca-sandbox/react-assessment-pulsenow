@@ -78,6 +78,8 @@ describe('Dashboard Page', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Portfolio Value')).toBeInTheDocument()
+        // Verify actual data value is displayed
+        expect(screen.getByText('$125,000.50')).toBeInTheDocument()
       })
     })
 
@@ -86,6 +88,8 @@ describe('Dashboard Page', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Top Gainers')).toBeInTheDocument()
+        // Verify gainers data is displayed
+        expect(screen.getByText('BTC')).toBeInTheDocument()
       })
     })
 
@@ -94,6 +98,8 @@ describe('Dashboard Page', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Top Losers')).toBeInTheDocument()
+        // Verify losers data is displayed
+        expect(screen.getByText('ETH')).toBeInTheDocument()
       })
     })
 
@@ -102,6 +108,8 @@ describe('Dashboard Page', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Recent News')).toBeInTheDocument()
+        // Verify news data is displayed
+        expect(screen.getByText('Apple Announces New Product Line')).toBeInTheDocument()
       })
     })
 
@@ -110,6 +118,8 @@ describe('Dashboard Page', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Active Alerts')).toBeInTheDocument()
+        // Verify alert data is displayed
+        expect(screen.getByText('Price Alert')).toBeInTheDocument()
       })
     })
   })

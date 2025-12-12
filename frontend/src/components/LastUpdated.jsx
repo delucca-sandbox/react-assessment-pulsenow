@@ -22,7 +22,10 @@ const LastUpdated = ({ timestamp, updateInterval = 10000 }) => {
 
   if (!timestamp) return null
 
-  const relativeTime = formatRelativeTime(timestamp)
+  const d = new Date(timestamp)
+  if (Number.isNaN(d.getTime())) return null
+
+  const relativeTime = formatRelativeTime(d)
 
   return (
     <div 

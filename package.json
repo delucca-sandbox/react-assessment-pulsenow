@@ -1,10 +1,14 @@
 {
   "name": "pulse-assessment",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "npm run test:unit --prefix frontend",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "playwright:install": "playwright install --with-deps"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0"

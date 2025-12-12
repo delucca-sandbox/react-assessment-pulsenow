@@ -47,9 +47,11 @@ describe('EmptyState', () => {
 
   describe('action button', () => {
     it('does not render action when not provided', () => {
-      render(<EmptyState />)
+      const { container } = render(<EmptyState />)
 
-      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+      // Check within the action slot specifically
+      const actionContainer = container.querySelector('.mt-2')
+      expect(actionContainer).not.toBeInTheDocument()
     })
 
     it('renders action when provided', () => {
@@ -74,17 +76,17 @@ describe('EmptyState', () => {
   })
 
   describe('accessibility', () => {
-    it('has status role', () => {
-      render(<EmptyState />)
+    it('has aria-label with title', () => {
+      render(<EmptyState title="Custom Title" />)
 
-      expect(screen.getByRole('status')).toBeInTheDocument()
+      expect(screen.getByLabelText('Custom Title')).toBeInTheDocument()
     })
 
     it('has aria-label matching title', () => {
       render(<EmptyState title="Custom Title" />)
 
-      const status = screen.getByRole('status')
-      expect(status).toHaveAttribute('aria-label', 'Custom Title')
+      const container = screen.getByLabelText('Custom Title')
+      expect(container).toHaveAttribute('aria-label', 'Custom Title')
     })
 
     it('icon is hidden from screen readers', () => {
@@ -99,7 +101,7 @@ describe('EmptyState', () => {
     it('has card styling', () => {
       render(<EmptyState />)
 
-      const container = screen.getByRole('status')
+      const container = screen.getByLabelText('No data available')
       expect(container.className).toContain('bg-white')
       expect(container.className).toContain('rounded-lg')
       expect(container.className).toContain('border')
@@ -108,7 +110,7 @@ describe('EmptyState', () => {
     it('has centered text', () => {
       render(<EmptyState />)
 
-      const container = screen.getByRole('status')
+      const container = screen.getByLabelText('No data available')
       expect(container.className).toContain('text-center')
     })
   })

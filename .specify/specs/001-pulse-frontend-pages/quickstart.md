@@ -13,8 +13,8 @@
 ### 1. Clone and Install Dependencies
 
 ```bash
-# From project root
-cd /home/delucca/Workspaces/src/sandbox/interviews/react-assessment-pulsenow
+# From repo root
+# cd <your-cloned-repo>
 
 # Install backend dependencies
 cd backend

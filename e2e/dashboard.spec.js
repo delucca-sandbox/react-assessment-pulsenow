@@ -36,15 +36,15 @@ test.describe('Dashboard Page', () => {
   test('displays top gainers with positive change indicators', async ({ page }) => {
     await expect(page.getByText('Top Gainers')).toBeVisible()
 
-    // Should show up arrows for gainers
-    await expect(page.locator('.text-green-600, .text-green-400').first()).toBeVisible()
+    // Should show percentage changes with + prefix indicating positive
+    await expect(page.getByText(/\+\d+\.\d+%/).first()).toBeVisible()
   })
 
   test('displays top losers with negative change indicators', async ({ page }) => {
     await expect(page.getByText('Top Losers')).toBeVisible()
 
-    // Should show down arrows for losers
-    await expect(page.locator('.text-red-600, .text-red-400').first()).toBeVisible()
+    // Should show percentage changes with - prefix indicating negative
+    await expect(page.getByText(/-\d+\.\d+%/).first()).toBeVisible()
   })
 
   test('displays recent news with category badges', async ({ page }) => {

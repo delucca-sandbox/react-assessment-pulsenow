@@ -17,8 +17,8 @@ code {
     monospace;
 }
 
-/* Theme transition classes */
-html {
+/* Theme transition classes - only active during user-initiated changes */
+html.theme-transitioning {
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 

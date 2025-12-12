@@ -48,20 +48,14 @@ describe('AssetsFilter', () => {
       expect(onTypeChange).toHaveBeenCalledWith('crypto')
     })
 
-    it('calls onTypeChange with all types', () => {
+    it.each(['all', 'stocks', 'crypto'])('calls onTypeChange with %s', (type) => {
       const onTypeChange = vi.fn()
-      render(<AssetsFilter {...defaultProps} typeFilter="stocks" onTypeChange={onTypeChange} />)
+      render(<AssetsFilter {...defaultProps} onTypeChange={onTypeChange} />)
 
       const dropdown = screen.getByRole('combobox')
-      
-      fireEvent.change(dropdown, { target: { value: 'all' } })
-      expect(onTypeChange).toHaveBeenCalledWith('all')
+      fireEvent.change(dropdown, { target: { value: type } })
 
-      fireEvent.change(dropdown, { target: { value: 'stocks' } })
-      expect(onTypeChange).toHaveBeenCalledWith('stocks')
-
-      fireEvent.change(dropdown, { target: { value: 'crypto' } })
-      expect(onTypeChange).toHaveBeenCalledWith('crypto')
+      expect(onTypeChange).toHaveBeenCalledWith(type)
     })
   })
 

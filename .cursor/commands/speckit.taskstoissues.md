@@ -24,6 +24,9 @@ git config --get remote.origin.url
 > [!CAUTION]
 > ONLY PROCEED TO NEXT STEPS IF THE REMOTE IS A GITHUB URL
 
+> [!TIP]
+> **DRY RUN MODE**: Consider performing a dry run first by outputting the planned issue titles and bodies WITHOUT calling `issue_write`. This allows review before mass creation and reduces accidental issue spam.
+
 1. For each task in the list, use the GitHub MCP server to create a new issue in the repository that is representative of the Git remote.
 
 > [!CAUTION]

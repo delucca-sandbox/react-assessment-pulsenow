@@ -8,7 +8,11 @@ import { getChangeColor, getChangeIcon } from '../utils/colors'
  * @param {string} type - 'gainers' or 'losers' for styling
  */
 const TopMoversCard = ({ title, movers = [], type = 'gainers' }) => {
-  const isGainers = type === 'gainers'
+  // Normalize and validate type
+  const validTypes = ['gainers', 'losers']
+  const normalizedType = validTypes.includes(type) ? type : 'gainers'
+  
+  const isGainers = normalizedType === 'gainers'
   const headerColor = isGainers 
     ? 'text-green-600 dark:text-green-400' 
     : 'text-red-600 dark:text-red-400'
@@ -25,7 +29,7 @@ const TopMoversCard = ({ title, movers = [], type = 'gainers' }) => {
 
       {movers.length === 0 ? (
         <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-          No {type} to display
+          No {normalizedType} to display
         </p>
       ) : (
         <ul className="space-y-3" aria-label={title}>

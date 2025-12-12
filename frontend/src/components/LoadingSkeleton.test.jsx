@@ -8,54 +8,63 @@ import LoadingSkeleton, { SkeletonCard, SkeletonTable } from './LoadingSkeleton'
 
 describe('LoadingSkeleton', () => {
   describe('rendering', () => {
-    it('renders a div element', () => {
-      const { container } = render(<LoadingSkeleton />)
+    it('renders with aria-hidden by default', () => {
+      render(<LoadingSkeleton />)
 
-      expect(container.querySelector('div')).toBeInTheDocument()
+      const skeleton = screen.queryByRole('status')
+      expect(skeleton).not.toBeInTheDocument() // Should be hidden by default
     })
 
     it('has animate-pulse class', () => {
-      const { container } = render(<LoadingSkeleton />)
+      render(<LoadingSkeleton role="status" aria-hidden={false} />)
 
-      const skeleton = container.firstChild
+      const skeleton = screen.getByRole('status')
       expect(skeleton.className).toContain('animate-pulse')
     })
 
     it('has background color classes', () => {
-      const { container } = render(<LoadingSkeleton />)
+      render(<LoadingSkeleton role="status" aria-hidden={false} />)
 
-      const skeleton = container.firstChild
-      expect(skeleton.className).toContain('bg-gray')
+      const skeleton = screen.getByRole('status')
+      expect(skeleton.className).toContain('bg-gray-200')
     })
   })
 
   describe('variants', () => {
     it('rectangle variant has rounded class', () => {
-      const { container } = render(<LoadingSkeleton variant="rectangle" />)
+      render(<LoadingSkeleton variant="rectangle" role="status" aria-hidden={false} />)
 
-      const skeleton = container.firstChild
+      const skeleton = screen.getByRole('status')
       expect(skeleton.className).toContain('rounded')
     })
 
     it('circle variant has rounded-full class', () => {
-      const { container } = render(<LoadingSkeleton variant="circle" />)
+      render(<LoadingSkeleton variant="circle" role="status" aria-hidden={false} />)
 
-      const skeleton = container.firstChild
+      const skeleton = screen.getByRole('status')
       expect(skeleton.className).toContain('rounded-full')
     })
 
     it('text variant has rounded and h-4 classes', () => {
-      const { container } = render(<LoadingSkeleton variant="text" />)
+      render(<LoadingSkeleton variant="text" role="status" aria-hidden={false} />)
 
-      const skeleton = container.firstChild
+      const skeleton = screen.getByRole('status')
       expect(skeleton.className).toContain('rounded')
       expect(skeleton.className).toContain('h-4')
     })
 
     it('defaults to rectangle variant', () => {
-      const { container } = render(<LoadingSkeleton />)
+      render(<LoadingSkeleton role="status" aria-hidden={false} />)
 
-      const skeleton = container.firstChild
+      const skeleton = screen.getByRole('status')
+      expect(skeleton.className).toContain('rounded')
+      expect(skeleton.className).not.toContain('rounded-full')
+    })
+    
+    it('validates invalid variant and falls back to rectangle', () => {
+      render(<LoadingSkeleton variant="invalid" role="status" aria-hidden={false} />)
+
+      const skeleton = screen.getByRole('status')
       expect(skeleton.className).toContain('rounded')
       expect(skeleton.className).not.toContain('rounded-full')
     })
@@ -63,34 +72,34 @@ describe('LoadingSkeleton', () => {
 
   describe('custom className', () => {
     it('applies custom className', () => {
-      const { container } = render(<LoadingSkeleton className="h-10 w-32" />)
+      render(<LoadingSkeleton className="h-10 w-32" role="status" aria-hidden={false} />)
 
-      const skeleton = container.firstChild
+      const skeleton = screen.getByRole('status')
       expect(skeleton.className).toContain('h-10')
       expect(skeleton.className).toContain('w-32')
     })
 
     it('combines custom className with base classes', () => {
-      const { container } = render(<LoadingSkeleton className="custom-class" />)
+      render(<LoadingSkeleton className="custom-class" role="status" aria-hidden={false} />)
 
-      const skeleton = container.firstChild
+      const skeleton = screen.getByRole('status')
       expect(skeleton.className).toContain('animate-pulse')
       expect(skeleton.className).toContain('custom-class')
     })
   })
 
   describe('accessibility', () => {
-    it('has status role', () => {
-      render(<LoadingSkeleton />)
+    it('can expose status role when explicitly set', () => {
+      render(<LoadingSkeleton role="status" aria-hidden={false} />)
 
       expect(screen.getByRole('status')).toBeInTheDocument()
     })
 
-    it('has aria-label', () => {
-      render(<LoadingSkeleton />)
+    it('is hidden from screen readers by default', () => {
+      const { container } = render(<LoadingSkeleton />)
 
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toHaveAttribute('aria-label', 'Loading...')
+      const skeleton = container.firstChild
+      expect(skeleton).toHaveAttribute('aria-hidden', 'true')
     })
   })
 })
@@ -107,9 +116,10 @@ describe('SkeletonCard', () => {
     })
 
     it('renders multiple skeleton lines', () => {
-      render(<SkeletonCard />)
+      const { container } = render(<SkeletonCard />)
 
-      const skeletons = screen.getAllByRole('status')
+      // SkeletonCard contains multiple LoadingSkeleton divs (aria-hidden by default)
+      const skeletons = container.querySelectorAll('.animate-pulse')
       expect(skeletons.length).toBeGreaterThan(1)
     })
 
@@ -148,17 +158,17 @@ describe('SkeletonTable', () => {
     })
 
     it('renders default 4 columns', () => {
-      render(<SkeletonTable rows={1} cols={4} />)
+      const { container } = render(<SkeletonTable rows={1} cols={4} />)
 
-      const skeletons = screen.getAllByRole('status')
+      const skeletons = container.querySelectorAll('.animate-pulse')
       // 4 in header + 4 in 1 row = 8
       expect(skeletons.length).toBe(8)
     })
 
     it('renders custom number of columns', () => {
-      render(<SkeletonTable rows={1} cols={6} />)
+      const { container } = render(<SkeletonTable rows={1} cols={6} />)
 
-      const skeletons = screen.getAllByRole('status')
+      const skeletons = container.querySelectorAll('.animate-pulse')
       // 6 in header + 6 in 1 row = 12
       expect(skeletons.length).toBe(12)
     })

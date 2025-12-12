@@ -46,6 +46,9 @@ test.describe('Assets Page', () => {
 
     // Verify filter is applied
     await expect(dropdown).toHaveValue('stocks')
+    
+    // Verify the table shows stock data (assuming AAPL is a stock in mock data)
+    await expect(page.locator('tbody').getByText('AAPL').first()).toBeVisible()
   })
 
   test('filters assets by type - crypto only', async ({ page }) => {
@@ -57,6 +60,9 @@ test.describe('Assets Page', () => {
 
     // Verify filter is applied
     await expect(dropdown).toHaveValue('crypto')
+    
+    // Verify the table shows crypto data (assuming BTC is crypto in mock data)
+    await expect(page.locator('tbody').getByText('BTC').first()).toBeVisible()
   })
 
   test('searches assets by symbol', async ({ page }) => {

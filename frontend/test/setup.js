@@ -15,11 +15,12 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-// Mock window.matchMedia for dark mode tests
+// Mock window.matchMedia for dark mode tests (configurable)
+let matchMediaMatches = false
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation(query => ({
-    matches: false,
+    matches: query.includes('dark') ? matchMediaMatches : false,
     media: query,
     onchange: null,
     addListener: vi.fn(),
@@ -30,14 +31,26 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
-// Mock localStorage
+// Helper to set matchMedia preference
+window.setMediaQueryPreference = (prefersDark) => {
+  matchMediaMatches = prefersDark
+}
+
+// Mock localStorage with stateful implementation
+const localStorageStore = new Map()
 const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
+  getItem: vi.fn((key) => localStorageStore.get(key) || null),
+  setItem: vi.fn((key, value) => localStorageStore.set(key, String(value))),
+  removeItem: vi.fn((key) => localStorageStore.delete(key)),
+  clear: vi.fn(() => localStorageStore.clear()),
 }
 Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+
+// Clear localStorage between tests
+afterEach(() => {
+  localStorageStore.clear()
+  matchMediaMatches = false
+})
 
 // Mock IntersectionObserver
 class MockIntersectionObserver {

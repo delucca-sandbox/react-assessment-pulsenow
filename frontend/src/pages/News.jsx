@@ -31,7 +31,8 @@ const News = () => {
     
     const counts = { all: newsData.length }
     newsData.forEach(item => {
-      counts[item.category] = (counts[item.category] || 0) + 1
+      const category = item.category || 'uncategorized'
+      counts[category] = (counts[category] || 0) + 1
     })
     return counts
   }, [newsData])

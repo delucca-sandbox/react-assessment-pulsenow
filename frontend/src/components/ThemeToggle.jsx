@@ -9,8 +9,10 @@ const ThemeToggle = () => {
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
       className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-pulse-primary focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+      aria-pressed={isDark}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >

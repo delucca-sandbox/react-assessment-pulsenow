@@ -4,6 +4,14 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor } from '../../test/test-utils'
+
+// Mock the API module BEFORE importing the component
+vi.mock('../services/api', () => ({
+  getAlerts: vi.fn()
+}))
+
+// Import the mocked module
+import * as api from '../services/api'
 import Alerts from './Alerts'
 
 // Mock data
@@ -36,14 +44,6 @@ const mockAlerts = [
     affectedAssets: ['BTC', 'ETH']
   }
 ]
-
-// Mock the API module
-vi.mock('../services/api', () => ({
-  getAlerts: vi.fn()
-}))
-
-// Import the mocked module
-import * as api from '../services/api'
 
 describe('Alerts Page', () => {
   beforeEach(() => {

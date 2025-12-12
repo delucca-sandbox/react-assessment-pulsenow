@@ -54,18 +54,18 @@ test.describe('Navigation', () => {
     await page.goto('/')
 
     const toggleButton = page.getByRole('button', { name: /sidebar/i })
-    const sidebar = page.locator('#sidebar-nav')
+    const sidebar = page.getByTestId('sidebar')
 
     // Initially expanded
-    await expect(sidebar).toHaveClass(/w-64/)
+    await expect(sidebar).toHaveAttribute('aria-expanded', 'true')
 
     // Click to collapse
     await toggleButton.click()
-    await expect(sidebar).toHaveClass(/w-16/)
+    await expect(sidebar).toHaveAttribute('aria-expanded', 'false')
 
     // Click to expand
     await toggleButton.click()
-    await expect(sidebar).toHaveClass(/w-64/)
+    await expect(sidebar).toHaveAttribute('aria-expanded', 'true')
   })
 
   test('navigation works with collapsed sidebar', async ({ page }) => {

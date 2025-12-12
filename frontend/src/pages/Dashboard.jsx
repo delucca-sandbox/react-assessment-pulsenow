@@ -49,7 +49,7 @@ const Dashboard = () => {
   }
 
   // Empty state
-  if (!data) {
+  if (!data || !data.portfolio) {
     return (
       <div className="space-y-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>

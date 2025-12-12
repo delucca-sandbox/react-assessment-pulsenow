@@ -34,7 +34,10 @@ const RecentNewsCard = ({ news = [], limit = 5 }) => {
               key={item.id}
               className="border-b border-gray-100 dark:border-gray-700 pb-3 last:border-0 last:pb-0"
             >
-              <h4 className="font-medium text-gray-900 dark:text-white mb-2 line-clamp-2 hover:text-pulse-primary dark:hover:text-pulse-light cursor-pointer transition-colors">
+              <h4 
+                className="font-medium text-gray-900 dark:text-white mb-2 line-clamp-2"
+                title={item.title}
+              >
                 {item.title}
               </h4>
               

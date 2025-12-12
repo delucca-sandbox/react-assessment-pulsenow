@@ -61,7 +61,7 @@ const HoldingsTable = ({ holdings = [] }) => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-gray-600 dark:text-gray-300">
-                    {holding.quantity.toLocaleString()}
+                    {holding.quantity.toLocaleString('en-US')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-gray-600 dark:text-gray-300">
                     {formatCurrency(holding.avgBuyPrice)}

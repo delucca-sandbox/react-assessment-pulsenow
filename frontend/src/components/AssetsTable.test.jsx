@@ -97,6 +97,7 @@ describe('AssetsTable', () => {
       const positiveChange = screen.getByText('+2.35%')
       // The color class is on the parent span element
       const parentSpan = positiveChange.closest('span.font-medium')
+      expect(parentSpan).not.toBeNull()
       expect(parentSpan.className).toContain('text-green')
     })
 
@@ -106,6 +107,7 @@ describe('AssetsTable', () => {
       const negativeChange = screen.getByText('-1.25%')
       // The color class is on the parent span element
       const parentSpan = negativeChange.closest('span.font-medium')
+      expect(parentSpan).not.toBeNull()
       expect(parentSpan.className).toContain('text-red')
     })
 

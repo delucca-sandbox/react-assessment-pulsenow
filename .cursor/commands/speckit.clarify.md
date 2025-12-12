@@ -149,6 +149,8 @@ Execution steps:
     - Save the spec file AFTER each integration to minimize risk of context loss (atomic overwrite).
     - Preserve formatting: do not reorder unrelated sections; keep heading hierarchy intact.
     - Keep each inserted clarification minimal and testable (avoid narrative drift).
+    
+    Note: Step 5 handles the write-back after each integration. Step 7 performs a final validation and summary only—no additional write step is needed beyond the atomic writes in Step 5.
 
 6. Validation (performed after EACH write plus final pass):
    - Clarifications session contains exactly one bullet per accepted answer (no duplicates).

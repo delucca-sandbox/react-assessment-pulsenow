@@ -1,6 +1,21 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { formatCurrency } from '../utils/formatters'
 
+// Custom tooltip component
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow-lg">
+        <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
+        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+          {formatCurrency(payload[0].value)}
+        </p>
+      </div>
+    )
+  }
+  return null
+}
+
 /**
  * PriceChart - Line chart for displaying price history
  * @param {Array} data - Array of price points with timestamp and price
@@ -20,32 +35,19 @@ const PriceChart = ({ data = [], color = '#6366f1', height = 300 }) => {
   }
 
   // Format data for Recharts
-  const chartData = data.map((point) => ({
-    ...point,
-    timestamp: new Date(point.timestamp).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
-    }),
-    price: point.price
-  }))
-
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow-lg">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">
-            {formatCurrency(payload[0].value)}
-          </p>
-        </div>
-      )
+  const chartData = data.map((point) => {
+    const d = new Date(point.timestamp)
+    const isValid = !Number.isNaN(d.getTime())
+    return {
+      ...point,
+      timestampLabel: isValid
+        ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        : '—'
     }
-    return null
-  }
+  })
 
   return (
-    <div style={{ height }} className="w-full">
+    <div style={{ height }} className="w-full" role="img" aria-label="Price history chart">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={chartData}
@@ -57,7 +59,7 @@ const PriceChart = ({ data = [], color = '#6366f1', height = 300 }) => {
             className="text-gray-200 dark:text-gray-700"
           />
           <XAxis 
-            dataKey="timestamp" 
+            dataKey="timestampLabel" 
             tick={{ fontSize: 12 }}
             stroke="currentColor"
             className="text-gray-500 dark:text-gray-400"

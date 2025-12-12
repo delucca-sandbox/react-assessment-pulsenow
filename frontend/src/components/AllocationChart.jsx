@@ -60,21 +60,24 @@ const AllocationChart = ({ data = [], height = 300 }) => {
   }
 
   // Custom legend
-  const CustomLegend = ({ payload }) => (
-    <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4">
-      {payload.map((entry, index) => (
-        <div key={index} className="flex items-center gap-2">
-          <div 
-            className="w-3 h-3 rounded-full" 
-            style={{ backgroundColor: entry.color }}
-          />
-          <span className="text-sm text-gray-600 dark:text-gray-300">
-            {entry.value} ({chartData[index]?.value.toFixed(1)}%)
-          </span>
-        </div>
-      ))}
-    </div>
-  )
+  const CustomLegend = ({ payload }) => {
+    if (!payload || payload.length === 0) return null
+    return (
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4">
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full" 
+              style={{ backgroundColor: entry.color }}
+            />
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              {entry.value} ({chartData[index]?.value.toFixed(1)}%)
+            </span>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div style={{ height }} className="w-full">

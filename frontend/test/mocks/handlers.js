@@ -235,7 +235,25 @@ export const handlers = [
   http.get('/api/crypto/:symbol', ({ params }) => {
     const crypto = mockCrypto.find(c => c.symbol === params.symbol)
     if (crypto) {
-      return HttpResponse.json({ data: crypto })
+      // Create crypto detail with price history (matching stock detail structure)
+      const cryptoDetail = {
+        ...crypto,
+        priceHistory: [
+          { timestamp: new Date(Date.now() - 86400000 * 7).toISOString(), price: crypto.currentPrice * 0.95 },
+          { timestamp: new Date(Date.now() - 86400000 * 6).toISOString(), price: crypto.currentPrice * 0.96 },
+          { timestamp: new Date(Date.now() - 86400000 * 5).toISOString(), price: crypto.currentPrice * 0.97 },
+          { timestamp: new Date(Date.now() - 86400000 * 4).toISOString(), price: crypto.currentPrice * 0.98 },
+          { timestamp: new Date(Date.now() - 86400000 * 3).toISOString(), price: crypto.currentPrice * 0.99 },
+          { timestamp: new Date(Date.now() - 86400000 * 2).toISOString(), price: crypto.currentPrice * 0.995 },
+          { timestamp: new Date(Date.now() - 86400000).toISOString(), price: crypto.currentPrice }
+        ],
+        keyMetrics: {
+          circulatingSupply: 19000000,
+          maxSupply: 21000000,
+          marketDominance: 45.5
+        }
+      }
+      return HttpResponse.json({ data: cryptoDetail })
     }
     return new HttpResponse(null, { status: 404 })
   }),

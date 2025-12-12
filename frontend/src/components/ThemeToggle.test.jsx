@@ -30,6 +30,8 @@ describe('ThemeToggle', () => {
       const button = screen.getByRole('button')
       const svg = button.querySelector('svg')
       expect(svg).toBeInTheDocument()
+      // The moon icon has text-gray-600 class
+      expect(svg.getAttribute('class')).toContain('text-gray')
     })
 
     it('shows sun icon in dark mode', () => {
@@ -39,7 +41,7 @@ describe('ThemeToggle', () => {
       const button = screen.getByRole('button')
       const svg = button.querySelector('svg')
       expect(svg).toBeInTheDocument()
-      // The sun icon has text-yellow-400 class - use getAttribute for SVG elements
+      // The sun icon has text-yellow-400 class
       expect(svg.getAttribute('class')).toContain('text-yellow')
     })
   })
