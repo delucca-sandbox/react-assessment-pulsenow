@@ -36,3 +36,8 @@ yarn-error.log*
 # Misc
 .cache/
 .temp/
+
+# Test artifacts
+playwright-report/
+test-results/
+*.png
