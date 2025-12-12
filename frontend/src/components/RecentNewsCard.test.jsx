@@ -3,7 +3,7 @@
  * Tests news display with category badges
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '../test/test-utils'
+import { render, screen } from '../../test/test-utils'
 import RecentNewsCard from './RecentNewsCard'
 
 describe('RecentNewsCard', () => {

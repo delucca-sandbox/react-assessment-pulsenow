@@ -15,7 +15,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.js'],
+    setupFiles: ['./test/setup.js'],
     include: ['src/**/*.{test,spec}.{js,jsx}'],
     coverage: {
       provider: 'v8',
@@ -23,7 +23,7 @@ export default defineConfig({
       include: ['src/**/*.{js,jsx}'],
       exclude: [
         'src/main.jsx',
-        'src/test/**',
+        'test/**',
         'node_modules/**'
       ],
       thresholds: {

@@ -3,7 +3,7 @@
  * Tests filter controls for type and search
  */
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '../test/test-utils'
+import { render, screen, fireEvent } from '../../test/test-utils'
 import AssetsFilter from './AssetsFilter'
 
 describe('AssetsFilter', () => {

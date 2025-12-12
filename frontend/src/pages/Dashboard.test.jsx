@@ -3,7 +3,7 @@
  * Tests full page rendering with API mocking
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '../test/test-utils'
+import { render, screen, waitFor } from '../../test/test-utils'
 import Dashboard from './Dashboard'
 
 // Mock data

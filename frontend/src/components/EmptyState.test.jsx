@@ -3,7 +3,7 @@
  * Tests empty state display with various configurations
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '../test/test-utils'
+import { render, screen } from '../../test/test-utils'
 import EmptyState from './EmptyState'
 
 describe('EmptyState', () => {

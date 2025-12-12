@@ -3,7 +3,7 @@
  * Tests loading state display components
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '../test/test-utils'
+import { render, screen } from '../../test/test-utils'
 import LoadingSkeleton, { SkeletonCard, SkeletonTable } from './LoadingSkeleton'
 
 describe('LoadingSkeleton', () => {

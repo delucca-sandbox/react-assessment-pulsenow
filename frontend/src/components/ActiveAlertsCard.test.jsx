@@ -3,7 +3,7 @@
  * Tests alerts display with severity badges
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '../test/test-utils'
+import { render, screen } from '../../test/test-utils'
 import ActiveAlertsCard from './ActiveAlertsCard'
 
 describe('ActiveAlertsCard', () => {

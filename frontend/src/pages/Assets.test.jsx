@@ -3,7 +3,7 @@
  * Tests full page rendering with filtering, sorting, and modal
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor, fireEvent } from '../test/test-utils'
+import { render, screen, waitFor, fireEvent } from '../../test/test-utils'
 import Assets from './Assets'
 
 // Mock data

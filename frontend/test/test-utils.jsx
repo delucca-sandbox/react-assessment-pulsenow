@@ -4,7 +4,7 @@
  */
 import { render } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import { ThemeProvider } from '../context/ThemeContext'
+import { ThemeProvider } from '../src/context/ThemeContext'
 
 /**
  * Custom render function that wraps components with providers

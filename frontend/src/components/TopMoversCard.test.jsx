@@ -3,7 +3,7 @@
  * Tests rendering of gainers and losers lists
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '../test/test-utils'
+import { render, screen } from '../../test/test-utils'
 import TopMoversCard from './TopMoversCard'
 
 describe('TopMoversCard', () => {

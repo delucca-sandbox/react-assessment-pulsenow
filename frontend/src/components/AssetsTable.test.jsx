@@ -3,7 +3,7 @@
  * Tests table rendering, sorting, and interactions
  */
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '../test/test-utils'
+import { render, screen, fireEvent } from '../../test/test-utils'
 import AssetsTable from './AssetsTable'
 
 describe('AssetsTable', () => {

@@ -3,7 +3,7 @@
  * Tests portfolio display with charts and holdings
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '../test/test-utils'
+import { render, screen, waitFor } from '../../test/test-utils'
 import Portfolio from './Portfolio'
 
 // Mock data - matching what HoldingsTable expects

@@ -3,7 +3,7 @@
  * Tests alerts display grouped by severity
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '../test/test-utils'
+import { render, screen, waitFor } from '../../test/test-utils'
 import Alerts from './Alerts'
 
 // Mock data

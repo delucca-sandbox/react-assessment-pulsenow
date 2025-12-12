@@ -3,7 +3,7 @@
  * Tests error display and retry functionality
  */
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '../test/test-utils'
+import { render, screen, fireEvent } from '../../test/test-utils'
 import ErrorMessage from './ErrorMessage'
 
 describe('ErrorMessage', () => {
