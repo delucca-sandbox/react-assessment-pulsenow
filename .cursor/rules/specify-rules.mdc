@@ -1,0 +1,42 @@
+# react-assessment-pulsenow Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-12-11
+
+## Active Technologies
+
+- JavaScript ES6+ with React 18.2.0, React Router DOM 6.20, Axios 1.6, Recharts 2.10, Tailwind CSS 3.3 (001-pulse-frontend-pages)
+
+## Project Structure
+
+```text
+src/
+  pages/           # Route page components
+  components/      # Reusable UI components
+  hooks/           # Custom React hooks
+  utils/           # Utility functions
+  context/         # React Context providers
+  services/        # API service layer
+tests/
+  unit/            # Unit tests
+  e2e/             # End-to-end tests
+```
+
+## Commands
+
+npm test && npm run lint
+
+## Code Style
+
+JavaScript ES6+ with React 18.2.0:
+- Prefer functional components and hooks
+- Use TypeScript-style JSDoc annotations for props/return types
+- Name custom hooks with `use` prefix (e.g., `useDataFetch`, `useTheme`)
+- Keep components and utilities modular and reusable
+- Follow Tailwind CSS class conventions for styling
+
+## Recent Changes
+
+- 001-pulse-frontend-pages: Added JavaScript ES6+ with React 18.2.0, React Router DOM 6.20, Axios 1.6, Recharts 2.10, Tailwind CSS 3.3
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->
