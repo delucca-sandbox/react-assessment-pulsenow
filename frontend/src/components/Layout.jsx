@@ -68,9 +68,11 @@ const Layout = ({ children }) => {
         {/* Sidebar */}
         <aside 
           data-testid="sidebar"
+          aria-label="Main navigation"
+          aria-expanded={sidebarOpen}
           className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-[calc(100vh-4rem)] transition-all duration-300`}
         >
-          <nav id="sidebar-nav" aria-label="Main navigation" className="p-4">
+          <nav id="sidebar-nav" className="p-4">
             <ul className="space-y-2" role="list">
               {NAVIGATION.map((item) => (
                 <li key={item.path}>
