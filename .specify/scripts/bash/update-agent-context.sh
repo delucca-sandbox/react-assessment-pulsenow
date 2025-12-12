@@ -52,15 +52,66 @@ set -o pipefail
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# Get all paths and variables from common functions
-# shellcheck disable=SC1090
-# Validate branch name before sourcing to prevent injection
+# Get all paths and variables from common functions - parse safely without sourcing
+# to prevent shell injection from untrusted branch names or path values
 _tmp_paths=$(get_feature_paths)
-if ! grep -E "^CURRENT_BRANCH='[0-9]{3}-[A-Za-z0-9._/-]+'\$" <<< "$_tmp_paths" >/dev/null 2>&1; then
-    log_error "Invalid branch name; expected format: NNN-feature-name"
-    exit 1
-fi
-source <(echo "$_tmp_paths")
+
+# Parse each variable assignment individually without executing shell code
+while IFS= read -r line; do
+    # Skip empty lines
+    [[ -z "$line" ]] && continue
+    
+    # Extract key and value from KEY='value' format
+    if [[ "$line" =~ ^([A-Z_]+)=\'(.*)\'$ ]]; then
+        key="${BASH_REMATCH[1]}"
+        value="${BASH_REMATCH[2]}"
+    else
+        # Skip malformed lines
+        continue
+    fi
+    
+    case "$key" in
+        REPO_ROOT)
+            REPO_ROOT="$value"
+            ;;
+        CURRENT_BRANCH)
+            # Validate branch name format before accepting
+            if [[ ! "$value" =~ ^[0-9]{3}-[A-Za-z0-9._/-]+$ ]]; then
+                log_error "Invalid branch name: $value"
+                log_error "Expected format: NNN-feature-name (alphanumeric, dots, underscores, hyphens, slashes only)"
+                exit 1
+            fi
+            CURRENT_BRANCH="$value"
+            ;;
+        HAS_GIT)
+            HAS_GIT="$value"
+            ;;
+        FEATURE_DIR)
+            FEATURE_DIR="$value"
+            ;;
+        FEATURE_SPEC)
+            FEATURE_SPEC="$value"
+            ;;
+        IMPL_PLAN)
+            IMPL_PLAN="$value"
+            ;;
+        TASKS)
+            TASKS="$value"
+            ;;
+        RESEARCH)
+            RESEARCH="$value"
+            ;;
+        DATA_MODEL)
+            DATA_MODEL="$value"
+            ;;
+        QUICKSTART)
+            QUICKSTART="$value"
+            ;;
+        CONTRACTS_DIR)
+            CONTRACTS_DIR="$value"
+            ;;
+    esac
+done <<< "$_tmp_paths"
 
 NEW_PLAN="$IMPL_PLAN"  # Alias for compatibility with existing code
 AGENT_TYPE="${1:-}"
@@ -503,7 +554,7 @@ update_existing_agent_file() {
             echo "$line" >> "$temp_file"
             in_changes_section=false
             continue
-        elif [[ $in_changes_section == true ]] && [[ "$line" == "- "* ]]; then
+        elif [[ $in_changes_section == true ]] && [[ $line == "- "* ]]; then
             # Keep only first 2 existing changes
             if [[ $existing_changes_count -lt 2 ]]; then
                 echo "$line" >> "$temp_file"
