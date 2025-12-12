@@ -1,7 +1,7 @@
 # Implementation Plan: Pulse Frontend Pages
 
 **Branch**: `001-pulse-frontend-pages` | **Date**: 2025-12-11 | **Spec**: [spec.md](./spec.md)
-**Input**: Feature specification from `/specs/001-pulse-frontend-pages/spec.md`
+**Input**: Feature specification from `/.specify/specs/001-pulse-frontend-pages/spec.md`
 
 ## Summary
 
@@ -41,7 +41,7 @@ Build the complete frontend pages for Pulse, a market monitoring platform for st
 ### Documentation (this feature)
 
 ```text
-specs/001-pulse-frontend-pages/
+.specify/specs/001-pulse-frontend-pages/
 ├── plan.md              # This file (/speckit.plan command output)
 ├── research.md          # Phase 0 output (/speckit.plan command)
 ├── data-model.md        # Phase 1 output (/speckit.plan command)
@@ -123,11 +123,11 @@ backend/                  # IMMUTABLE - DO NOT MODIFY
 
 | Artifact | Path | Description |
 |----------|------|-------------|
-| Implementation Plan | `specs/001-pulse-frontend-pages/plan.md` | This file |
-| Research | `specs/001-pulse-frontend-pages/research.md` | Technology decisions and patterns |
-| Data Model | `specs/001-pulse-frontend-pages/data-model.md` | Entity definitions and relationships |
-| API Types | `specs/001-pulse-frontend-pages/contracts/api-types.ts` | TypeScript interfaces for API |
-| Quickstart | `specs/001-pulse-frontend-pages/quickstart.md` | Setup and implementation guide |
+| Implementation Plan | `.specify/specs/001-pulse-frontend-pages/plan.md` | This file |
+| Research | `.specify/specs/001-pulse-frontend-pages/research.md` | Technology decisions and patterns |
+| Data Model | `.specify/specs/001-pulse-frontend-pages/data-model.md` | Entity definitions and relationships |
+| API Types | `.specify/specs/001-pulse-frontend-pages/contracts/api-types.ts` | TypeScript interfaces for API |
+| Quickstart | `.specify/specs/001-pulse-frontend-pages/quickstart.md` | Setup and implementation guide |
 
 ---
 

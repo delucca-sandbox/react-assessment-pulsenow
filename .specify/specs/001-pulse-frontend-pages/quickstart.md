@@ -274,7 +274,7 @@ const getSeverityClasses = (severity) => ({
 - [Recharts Documentation](https://recharts.org/en-US/)
 - [Axios Documentation](https://axios-http.com/docs/intro)
 - Constitution: `.specify/memory/constitution.md`
-- Feature Spec: `specs/001-pulse-frontend-pages/spec.md`
-- Data Model: `specs/001-pulse-frontend-pages/data-model.md`
+- Feature Spec: `.specify/specs/001-pulse-frontend-pages/spec.md`
+- Data Model: `.specify/specs/001-pulse-frontend-pages/data-model.md`
 
 

@@ -1,6 +1,6 @@
 # Tasks: Pulse Frontend Pages
 
-**Input**: Design documents from `/specs/001-pulse-frontend-pages/`
+**Input**: Design documents from `/.specify/specs/001-pulse-frontend-pages/`
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/api-types.ts ✅
 
 **Tests**: Manual testing only (no automated tests specified)
