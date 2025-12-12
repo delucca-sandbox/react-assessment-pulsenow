@@ -72,7 +72,6 @@ const Layout = ({ children }) => {
           data-testid="sidebar"
           className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-[calc(100vh-4rem)] transition-all duration-300`}
           aria-label="Main navigation"
-          aria-expanded={sidebarOpen}
         >
           <nav className="p-4">
             <ul className="space-y-2" role="list">
@@ -88,7 +87,6 @@ const Layout = ({ children }) => {
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`
                     }
-                    aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
                   >
                     <span className="text-xl" aria-hidden="true">{item.icon}</span>
                     {sidebarOpen && <span>{item.name}</span>}

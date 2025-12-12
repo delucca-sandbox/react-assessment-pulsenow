@@ -106,17 +106,22 @@ log_warning() {
 }
 
 # Escape special characters for sed replacement strings
-# Escapes: / & \ newline
+# Escapes: backslash, forward slash, ampersand, pipe, and newlines
 escape_for_sed() {
-    printf '%s\n' "$1" | sed -e 's/[\/&]/\\&/g'
+    # Escape backslash first, then other special chars
+    printf '%s' "$1" | sed -e 's/[\\]/\\\\/g' -e 's/[\/&|]/\\&/g'
 }
+
+# Track temporary files for cleanup
+TEMP_FILES=()
 
 # Cleanup function for temporary files
 cleanup() {
     local exit_code=$?
-    rm -f /tmp/agent_update_*_$$
-    rm -f /tmp/manual_additions_$$
-    exit $exit_code
+    if ((${#TEMP_FILES[@]})); then
+        rm -f -- "${TEMP_FILES[@]}" 2>/dev/null || true
+    fi
+    return "$exit_code"
 }
 
 # Set up cleanup trap
@@ -308,12 +313,20 @@ create_new_agent_file() {
     
     # Perform substitutions with error checking using safer approach
     # Escape special characters for sed
+    local escaped_project_name
+    escaped_project_name=$(escape_for_sed "$project_name")
     local escaped_lang
     escaped_lang=$(escape_for_sed "$NEW_LANG")
     local escaped_framework
     escaped_framework=$(escape_for_sed "$NEW_FRAMEWORK")
     local escaped_branch
     escaped_branch=$(escape_for_sed "$CURRENT_BRANCH")
+    local escaped_project_structure
+    escaped_project_structure=$(escape_for_sed "$project_structure")
+    local escaped_commands
+    escaped_commands=$(escape_for_sed "$commands")
+    local escaped_language_conventions
+    escaped_language_conventions=$(escape_for_sed "$language_conventions")
     
     # Build technology stack and recent change strings conditionally
     local tech_stack
@@ -339,23 +352,16 @@ create_new_agent_file() {
     fi
 
     local substitutions=(
-        "s|\[PROJECT NAME\]|$project_name|"
+        "s|\[PROJECT NAME\]|$escaped_project_name|"
         "s|\[DATE\]|$current_date|"
         "s|\[EXTRACTED FROM ALL PLAN.MD FILES\]|$tech_stack|"
-        "s|\[ACTUAL STRUCTURE FROM PLANS\]|$project_structure|g"
-        "s|\[ONLY COMMANDS FOR ACTIVE TECHNOLOGIES\]|$commands|"
-        "s|\[LANGUAGE-SPECIFIC, ONLY FOR LANGUAGES IN USE\]|$language_conventions|"
+        "s|\[ACTUAL STRUCTURE FROM PLANS\]|$escaped_project_structure|g"
+        "s|\[ONLY COMMANDS FOR ACTIVE TECHNOLOGIES\]|$escaped_commands|"
+        "s|\[LANGUAGE-SPECIFIC, ONLY FOR LANGUAGES IN USE\]|$escaped_language_conventions|"
         "s|\[LAST 3 FEATURES AND WHAT THEY ADDED\]|$recent_change|"
     )
     
-    # Detect OS for sed compatibility
-    local sed_inplace_flag
-    if [[ "$(uname)" == "Darwin" ]]; then
-        sed_inplace_flag="-i ''"
-    else
-        sed_inplace_flag="-i"
-    fi
-    
+    # Perform sed substitutions with OS-specific in-place editing
     for substitution in "${substitutions[@]}"; do
         if [[ "$(uname)" == "Darwin" ]]; then
             if ! sed -i '' -e "$substitution" "$temp_file"; then
@@ -398,6 +404,7 @@ update_existing_agent_file() {
         log_error "Failed to create temporary file"
         return 1
     }
+    TEMP_FILES+=("$temp_file")
     
     # Process the file in one pass
     local tech_stack
@@ -406,11 +413,11 @@ update_existing_agent_file() {
     local new_change_entry=""
     
     # Prepare new technology entries
-    if [[ -n "$tech_stack" ]] && ! grep -q "$tech_stack" "$target_file"; then
+    if [[ -n "$tech_stack" ]] && ! grep -Fq -- "$tech_stack" "$target_file"; then
         new_tech_entries+=("- $tech_stack ($CURRENT_BRANCH)")
     fi
     
-    if [[ -n "$NEW_DB" ]] && [[ "$NEW_DB" != "N/A" ]] && [[ "$NEW_DB" != "NEEDS CLARIFICATION" ]] && ! grep -q "$NEW_DB" "$target_file"; then
+    if [[ -n "$NEW_DB" ]] && [[ "$NEW_DB" != "N/A" ]] && [[ "$NEW_DB" != "NEEDS CLARIFICATION" ]] && ! grep -Fq -- "$NEW_DB" "$target_file"; then
         new_tech_entries+=("- $NEW_DB ($CURRENT_BRANCH)")
     fi
     
@@ -560,6 +567,7 @@ update_agent_file() {
             log_error "Failed to create temporary file"
             return 1
         }
+        TEMP_FILES+=("$temp_file")
         
         if create_new_agent_file "$target_file" "$temp_file" "$project_name" "$current_date"; then
             if mv "$temp_file" "$target_file"; then

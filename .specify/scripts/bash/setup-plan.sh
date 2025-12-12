@@ -41,6 +41,12 @@ fi
 # Check if we're on a proper feature branch (only for git repos)
 check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 
+# Ensure FEATURE_DIR is set and non-empty
+if [[ -z "${FEATURE_DIR:-}" ]]; then
+    echo "ERROR: FEATURE_DIR is empty (could not resolve feature directory for branch: ${CURRENT_BRANCH:-unknown})" >&2
+    exit 1
+fi
+
 # Ensure the feature directory exists
 mkdir -p "$FEATURE_DIR"
 
@@ -57,7 +63,20 @@ else
     echo "Warning: Plan template not found at $TEMPLATE"
     # Create a basic plan file if template doesn't exist
     if [[ ! -f "$IMPL_PLAN" ]]; then
-        touch "$IMPL_PLAN"
+        cat >"$IMPL_PLAN" <<'EOF'
+# Implementation Plan
+
+## Overview
+- TODO: Describe the feature/task
+
+## Milestones
+- TODO: Break down into milestones
+
+## Technical Details
+- TODO: Add technical specifications
+
+EOF
+        echo "Created minimal plan stub at $IMPL_PLAN"
     fi
 fi
 

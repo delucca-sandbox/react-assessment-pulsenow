@@ -136,7 +136,7 @@ Execution steps:
 5. Integration after EACH accepted answer (incremental update approach):
     - Maintain in-memory representation of the spec (loaded once at start) plus the raw file contents.
     - For the first integrated answer in this invocation:
-       - Ensure a `## Clarifications` section exists (create it just after the highest-level contextual/overview section per the spec template if missing).
+       - Ensure a `## Clarifications` section exists. Insertion anchor order (use first match): (a) immediately after `## Overview` if present, (b) immediately after the first H2 heading in the document, (c) immediately after the frontmatter/title block if present, or (d) at the beginning of the content if no other anchor found.
        - Under it, create (if not present) a `### Session YYYY-MM-DD` subheading for today.
        - Track cumulative question count across all sessions to enforce the 10-question lifecycle cap.
     - Append a bullet line immediately after acceptance: `- Q: <question> → A: <final answer>`.
@@ -148,7 +148,7 @@ Execution steps:
        - Edge case / negative flow → Add a new bullet under Edge Cases / Error Handling (or create such subsection if template provides placeholder for it).
        - Terminology conflict → Normalize term across spec; retain original only if necessary by adding `(formerly referred to as "X")` once.
     - If the clarification invalidates an earlier ambiguous statement, replace that statement instead of duplicating; leave no obsolete contradictory text.
-    - Save the spec file AFTER each integration to minimize risk of context loss (atomic overwrite).
+    - Save the spec file AFTER each integration to minimize risk of context loss (atomic overwrite). For atomic write: create a temporary file in the same directory as the spec, write the updated content to it, optionally fsync the temp file, then rename/move it to replace the original spec file (rename is atomic on POSIX systems).
     - Preserve formatting: do not reorder unrelated sections; keep heading hierarchy intact.
     - Keep each inserted clarification minimal and testable (avoid narrative drift).
     
@@ -163,7 +163,9 @@ Execution steps:
    - Markdown structure valid; only allowed new headings: `## Clarifications`, `### Session YYYY-MM-DD`.
    - Terminology consistency: same canonical term used across all updated sections.
 
-7. Write the updated spec back to `FEATURE_SPEC`.
+7. Final validation only (no additional write; validation only):
+   - Perform a final validation pass using the criteria from Step 6.
+   - No file write occurs in this step; all writes have been completed atomically in Step 5.
 
 8. Report completion (after questioning loop ends or early termination):
    - Number of questions asked & answered.
