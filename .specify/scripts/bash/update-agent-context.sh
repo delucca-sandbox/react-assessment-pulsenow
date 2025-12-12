@@ -77,17 +77,13 @@ log_warning() {
 _tmp_paths=$(get_feature_paths)
 
 # Initialize all required variables to avoid set -u crashes and enable validation
+# Note: Only variables actually used by this script are initialized.
+# Other variables from get_feature_paths (FEATURE_DIR, FEATURE_SPEC, TASKS, etc.)
+# are intentionally ignored as they're not needed for agent context updates.
 REPO_ROOT=""
 CURRENT_BRANCH=""
 HAS_GIT="false"
-FEATURE_DIR=""
-FEATURE_SPEC=""
 IMPL_PLAN=""
-TASKS=""
-RESEARCH=""
-DATA_MODEL=""
-QUICKSTART=""
-CONTRACTS_DIR=""
 
 # Parse each variable assignment individually without executing shell code
 while IFS= read -r line; do
@@ -120,29 +116,13 @@ while IFS= read -r line; do
         HAS_GIT)
             HAS_GIT="$value"
             ;;
-        FEATURE_DIR)
-            FEATURE_DIR="$value"
-            ;;
-        FEATURE_SPEC)
-            FEATURE_SPEC="$value"
-            ;;
         IMPL_PLAN)
             IMPL_PLAN="$value"
             ;;
-        TASKS)
-            TASKS="$value"
-            ;;
-        RESEARCH)
-            RESEARCH="$value"
-            ;;
-        DATA_MODEL)
-            DATA_MODEL="$value"
-            ;;
-        QUICKSTART)
-            QUICKSTART="$value"
-            ;;
-        CONTRACTS_DIR)
-            CONTRACTS_DIR="$value"
+        # Ignore unused variables from get_feature_paths:
+        # FEATURE_DIR, FEATURE_SPEC, TASKS, RESEARCH, DATA_MODEL, QUICKSTART, CONTRACTS_DIR
+        *)
+            # Silently ignore other keys from get_feature_paths that aren't needed
             ;;
     esac
 done <<< "$_tmp_paths"
