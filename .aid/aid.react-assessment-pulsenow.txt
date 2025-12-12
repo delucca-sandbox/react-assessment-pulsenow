@@ -1,0 +1,276 @@
+<file path="backend/controllers/alertController.js">
+const alertService = require('../services/alertService')
+const asyncHandler = require('../middleware/asyncHandler')
+</file>
+
+<file path="backend/controllers/assetController.js">
+const assetService = require('../services/assetService')
+const asyncHandler = require('../middleware/asyncHandler')
+</file>
+
+<file path="backend/controllers/dashboardController.js">
+const mockData = require('../mockData')
+const asyncHandler = require('../middleware/asyncHandler')
+</file>
+
+<file path="backend/controllers/eventController.js">
+const mockData = require('../mockData')
+const asyncHandler = require('../middleware/asyncHandler')
+</file>
+
+<file path="backend/controllers/insightController.js">
+const mockData = require('../mockData')
+const asyncHandler = require('../middleware/asyncHandler')
+</file>
+
+<file path="backend/controllers/newsController.js">
+const newsService = require('../services/newsService')
+const asyncHandler = require('../middleware/asyncHandler')
+</file>
+
+<file path="backend/controllers/portfolioController.js">
+const mockData = require('../mockData')
+const asyncHandler = require('../middleware/asyncHandler')
+</file>
+
+<file path="backend/middleware/asyncHandler.js">
+const asyncHandler = (fn)
+</file>
+
+<file path="backend/middleware/errorHandler.js">
+const errorHandler = (err, req, res, next)
+</file>
+
+<file path="backend/middleware/validator.js">
+const validator = { validatePagination(req, res, next), validateSymbol(req, res, next), validateDateRange(req, res, next), validateFilters(req, res, next) }
+</file>
+
+<file path="backend/mockData.js">
+const generateMarketData = ()
+</file>
+
+<file path="backend/routes/alertRoutes.js">
+const express = require('express')
+const router = express.Router()
+const {
+  getAlerts,
+  getAlertsBySeverity,
+  getAlertsByAsset,
+  getCriticalAlerts,
+  getAlertStats
+} = require('../controllers/alertController')
+const { validatePagination, validateFilters } = require('../middleware/validator')
+</file>
+
+<file path="backend/routes/assetRoutes.js">
+const express = require('express')
+const router = express.Router()
+const {
+  getStocks,
+  getStock,
+  getCrypto,
+  getCryptoBySymbol,
+  getAllAssets,
+  getPriceHistory,
+  getMarketStats
+} = require('../controllers/assetController')
+const { validatePagination, validateSymbol, validateDateRange, validateFilters } = require('../middleware/validator')
+</file>
+
+<file path="backend/routes/dashboardRoutes.js">
+const express = require('express')
+const router = express.Router()
+const { getDashboard } = require('../controllers/dashboardController')
+</file>
+
+<file path="backend/routes/eventRoutes.js">
+const express = require('express')
+const router = express.Router()
+const { getEvents, getUpcomingEvents } = require('../controllers/eventController')
+const { validateFilters } = require('../middleware/validator')
+</file>
+
+<file path="backend/routes/index.js">
+const express = require('express')
+const router = express.Router()
+const assetRoutes = require('./assetRoutes')
+const newsRoutes = require('./newsRoutes')
+const alertRoutes = require('./alertRoutes')
+const dashboardRoutes = require('./dashboardRoutes')
+const portfolioRoutes = require('./portfolioRoutes')
+const eventRoutes = require('./eventRoutes')
+const insightRoutes = require('./insightRoutes')
+const influencerRoutes = require('./influencerRoutes')
+</file>
+
+<file path="backend/routes/influencerRoutes.js">
+const express = require('express')
+const router = express.Router()
+const mockData = require('../mockData')
+const asyncHandler = require('../middleware/asyncHandler')
+</file>
+
+<file path="backend/routes/insightRoutes.js">
+const express = require('express')
+const router = express.Router()
+const { getInsights } = require('../controllers/insightController')
+const { validateFilters } = require('../middleware/validator')
+</file>
+
+<file path="backend/routes/newsRoutes.js">
+const express = require('express')
+const router = express.Router()
+const {
+  getNews,
+  getNewsByAsset,
+  getNewsByCategory,
+  getNewsStats
+} = require('../controllers/newsController')
+const { validatePagination, validateFilters } = require('../middleware/validator')
+</file>
+
+<file path="backend/routes/portfolioRoutes.js">
+const express = require('express')
+const router = express.Router()
+const { getPortfolio, getPortfolioPerformance } = require('../controllers/portfolioController')
+</file>
+
+<file path="backend/server.js">
+const express = require('express')
+const cors = require('cors')
+const errorHandler = require('./middleware/errorHandler')
+const app = express()
+const PORT = process.env.PORT || 5000
+const apiRoutes = require('./routes')
+const mockData = require('./mockData')
+</file>
+
+<file path="backend/services/alertService.js">
+const mockData = require('../mockData')
+const { filterAlerts } = require('../utils/filters')
+const { sortData, paginate } = require('../utils/pagination')
+
+class AlertService:
+    getAllAlerts(filters = {}, pagination = {})
+    getAlertsBySeverity(severity, filters = {}, pagination = {})
+    getAlertsByAsset(assetSymbol, filters = {}, pagination = {})
+    getCriticalAlerts(filters = {}, pagination = {})
+    getAlertStats()
+</file>
+
+<file path="backend/services/assetService.js">
+const mockData = require('../mockData')
+const { filterAssets } = require('../utils/filters')
+const { sortData, paginate } = require('../utils/pagination')
+
+class AssetService:
+    getAllStocks(filters = {}, pagination = {})
+    getStockBySymbol(symbol)
+    getAllCrypto(filters = {}, pagination = {})
+    getCryptoBySymbol(symbol)
+    getAllAssets(filters = {}, pagination = {})
+    getPriceHistory(symbol, startDate, endDate)
+    getMarketStats()
+</file>
+
+<file path="backend/services/newsService.js">
+const mockData = require('../mockData')
+const { filterNews } = require('../utils/filters')
+const { sortData, paginate } = require('../utils/pagination')
+
+class NewsService:
+    getAllNews(filters = {}, pagination = {})
+    getNewsByAsset(assetSymbol, filters = {}, pagination = {})
+    getNewsByCategory(category, filters = {}, pagination = {})
+    getNewsStats()
+</file>
+
+<file path="backend/utils/filters.js">
+const filterAssets = (assets, filters)
+const filterNews = (news, filters)
+const filterAlerts = (alerts, filters)
+</file>
+
+<file path="backend/utils/pagination.js">
+const paginate = (data, page = 1, limit = 10)
+const sortData = (data, sortBy, order = 'asc')
+</file>
+
+<file path="frontend/src/App.jsx">
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Dashboard from './pages/Dashboard'
+import Assets from './pages/Assets'
+import News from './pages/News'
+import Alerts from './pages/Alerts'
+import Portfolio from './pages/Portfolio'
+import Layout from './components/Layout'
+function App()
+</file>
+
+<file path="frontend/src/components/Layout.jsx">
+import { Link, useLocation } from 'react-router-dom'
+import useState from 'react'
+import MetaMaskButton from './MetaMaskButton'
+const Layout = ({ children })
+</file>
+
+<file path="frontend/src/components/MetaMaskButton.jsx">
+import { useState, useEffect } from 'react'
+const MetaMaskButton = ()
+</file>
+
+<file path="frontend/src/main.jsx">
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+</file>
+
+<file path="frontend/src/pages/Alerts.jsx">
+const Alerts = ()
+</file>
+
+<file path="frontend/src/pages/Assets.jsx">
+const Assets = ()
+</file>
+
+<file path="frontend/src/pages/Dashboard.jsx">
+const Dashboard = ()
+</file>
+
+<file path="frontend/src/pages/News.jsx">
+const News = ()
+</file>
+
+<file path="frontend/src/pages/Portfolio.jsx">
+const Portfolio = ()
+</file>
+
+<file path="frontend/src/services/api.js">
+import axios from 'axios'
+const API_BASE_URL = '/api'
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+const getStocks = ()
+const getStock = (symbol)
+const getCrypto = ()
+const getCryptoBySymbol = (symbol)
+const getNews = (params)
+const getNewsByAsset = (symbol)
+const getAlerts = (params)
+const getEvents = ()
+const getUpcomingEvents = ()
+const getInfluencers = ()
+const getPortfolio = ()
+const getInsights = (params)
+const getDashboard = ()
+</file>
+
+<file path="frontend/vite.config.js">
+import defineConfig from 'vite'
+import react from '@vitejs/plugin-react'
+</file>
