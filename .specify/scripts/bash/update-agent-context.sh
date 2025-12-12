@@ -52,9 +52,42 @@ set -o pipefail
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
+#==============================================================================
+# Utility Functions (defined early for use in initialization)
+#==============================================================================
+
+log_info() {
+    echo "INFO: $1"
+}
+
+log_success() {
+    echo "✓ $1"
+}
+
+log_error() {
+    echo "ERROR: $1" >&2
+}
+
+log_warning() {
+    echo "WARNING: $1" >&2
+}
+
 # Get all paths and variables from common functions - parse safely without sourcing
 # to prevent shell injection from untrusted branch names or path values
 _tmp_paths=$(get_feature_paths)
+
+# Initialize all required variables to avoid set -u crashes and enable validation
+REPO_ROOT=""
+CURRENT_BRANCH=""
+HAS_GIT="false"
+FEATURE_DIR=""
+FEATURE_SPEC=""
+IMPL_PLAN=""
+TASKS=""
+RESEARCH=""
+DATA_MODEL=""
+QUICKSTART=""
+CONTRACTS_DIR=""
 
 # Parse each variable assignment individually without executing shell code
 while IFS= read -r line; do
@@ -66,8 +99,9 @@ while IFS= read -r line; do
         key="${BASH_REMATCH[1]}"
         value="${BASH_REMATCH[2]}"
     else
-        # Skip malformed lines
-        continue
+        # Fail fast on malformed lines to avoid silent failures
+        log_error "Malformed get_feature_paths line: $line"
+        exit 1
     fi
     
     case "$key" in
@@ -113,6 +147,13 @@ while IFS= read -r line; do
     esac
 done <<< "$_tmp_paths"
 
+# Ensure required keys were loaded
+if [[ -z "$REPO_ROOT" || -z "$IMPL_PLAN" ]]; then
+    log_error "Failed to load required paths from get_feature_paths"
+    log_error "Missing: REPO_ROOT='$REPO_ROOT' IMPL_PLAN='$IMPL_PLAN'"
+    exit 1
+fi
+
 NEW_PLAN="$IMPL_PLAN"  # Alias for compatibility with existing code
 AGENT_TYPE="${1:-}"
 
@@ -144,24 +185,8 @@ NEW_DB=""
 NEW_PROJECT_TYPE=""
 
 #==============================================================================
-# Utility Functions
+# Additional Utility Functions
 #==============================================================================
-
-log_info() {
-    echo "INFO: $1"
-}
-
-log_success() {
-    echo "✓ $1"
-}
-
-log_error() {
-    echo "ERROR: $1" >&2
-}
-
-log_warning() {
-    echo "WARNING: $1" >&2
-}
 
 # Escape special characters for sed replacement strings
 # Escapes: backslash, forward slash, ampersand, pipe, and newlines
@@ -229,10 +254,14 @@ extract_plan_field() {
     local field_pattern="$1"
     local plan_file="$2"
     
-    # Use fixed-string matching for safety (field_pattern is literal text)
+    # Escape field_pattern for use in sed regex to prevent unintended metacharacter interpretation
+    local field_pattern_escaped
+    field_pattern_escaped=$(printf '%s' "$field_pattern" | sed -e 's/[][\/.^$*+?|(){}\\]/\\&/g')
+    
+    # Use fixed-string matching for grep, escaped pattern for sed
     grep -F "**${field_pattern}**: " "$plan_file" 2>/dev/null | \
         head -1 | \
-        sed "s|^\*\*${field_pattern}\*\*: ||" | \
+        sed "s|^\*\*${field_pattern_escaped}\*\*: ||" | \
         sed 's/^[ \t]*//;s/[ \t]*$//' | \
         grep -v "NEEDS CLARIFICATION" | \
         grep -v "^N/A$" || echo ""
