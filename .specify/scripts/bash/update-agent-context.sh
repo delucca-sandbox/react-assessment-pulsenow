@@ -105,6 +105,12 @@ log_warning() {
     echo "WARNING: $1" >&2
 }
 
+# Escape special characters for sed replacement strings
+# Escapes: / & \ newline
+escape_for_sed() {
+    printf '%s\n' "$1" | sed -e 's/[\/&]/\\&/g'
+}
+
 # Cleanup function for temporary files
 cleanup() {
     local exit_code=$?
@@ -301,13 +307,13 @@ create_new_agent_file() {
     language_conventions=$(get_language_conventions "$NEW_LANG")
     
     # Perform substitutions with error checking using safer approach
-    # Escape special characters for sed by using a different delimiter or escaping
+    # Escape special characters for sed
     local escaped_lang
-    escaped_lang=$(printf '%s\n' "$NEW_LANG" | sed 's/[\[\.*^$()+{}|]/\\&/g')
+    escaped_lang=$(escape_for_sed "$NEW_LANG")
     local escaped_framework
-    escaped_framework=$(printf '%s\n' "$NEW_FRAMEWORK" | sed 's/[\[\.*^$()+{}|]/\\&/g')
+    escaped_framework=$(escape_for_sed "$NEW_FRAMEWORK")
     local escaped_branch
-    escaped_branch=$(printf '%s\n' "$CURRENT_BRANCH" | sed 's/[\[\.*^$()+{}|]/\\&/g')
+    escaped_branch=$(escape_for_sed "$CURRENT_BRANCH")
     
     # Build technology stack and recent change strings conditionally
     local tech_stack
@@ -342,20 +348,37 @@ create_new_agent_file() {
         "s|\[LAST 3 FEATURES AND WHAT THEY ADDED\]|$recent_change|"
     )
     
+    # Detect OS for sed compatibility
+    local sed_inplace_flag
+    if [[ "$(uname)" == "Darwin" ]]; then
+        sed_inplace_flag="-i ''"
+    else
+        sed_inplace_flag="-i"
+    fi
+    
     for substitution in "${substitutions[@]}"; do
-        if ! sed -i.bak -e "$substitution" "$temp_file"; then
-            log_error "Failed to perform substitution: $substitution"
-            rm -f "$temp_file" "$temp_file.bak"
-            return 1
+        if [[ "$(uname)" == "Darwin" ]]; then
+            if ! sed -i '' -e "$substitution" "$temp_file"; then
+                log_error "Failed to perform substitution: $substitution"
+                rm -f "$temp_file"
+                return 1
+            fi
+        else
+            if ! sed -i -e "$substitution" "$temp_file"; then
+                log_error "Failed to perform substitution: $substitution"
+                rm -f "$temp_file"
+                return 1
+            fi
         fi
     done
     
     # Convert \n sequences to actual newlines
     newline=$(printf '\n')
-    sed -i.bak2 "s/\\\\n/${newline}/g" "$temp_file"
-    
-    # Clean up backup files
-    rm -f "$temp_file.bak" "$temp_file.bak2"
+    if [[ "$(uname)" == "Darwin" ]]; then
+        sed -i '' "s/\\\\n/${newline}/g" "$temp_file"
+    else
+        sed -i "s/\\\\n/${newline}/g" "$temp_file"
+    fi
     
     return 0
 }
@@ -489,7 +512,6 @@ update_existing_agent_file() {
         echo "" >> "$temp_file"
         echo "## Recent Changes" >> "$temp_file"
         echo "$new_change_entry" >> "$temp_file"
-        changes_entries_added=true
     fi
     
     # Move temp file to target atomically
@@ -645,81 +667,33 @@ update_specific_agent() {
 update_all_existing_agents() {
     local found_agent=false
     
+    # Define agent configurations: "file_path:agent_name"
+    declare -a AGENT_CONFIGS=(
+        "$CLAUDE_FILE:Claude Code"
+        "$GEMINI_FILE:Gemini CLI"
+        "$COPILOT_FILE:GitHub Copilot"
+        "$CURSOR_FILE:Cursor IDE"
+        "$QWEN_FILE:Qwen Code"
+        "$AGENTS_FILE:Codex/opencode"
+        "$WINDSURF_FILE:Windsurf"
+        "$KILOCODE_FILE:Kilo Code"
+        "$AUGGIE_FILE:Auggie CLI"
+        "$ROO_FILE:Roo Code"
+        "$CODEBUDDY_FILE:CodeBuddy CLI"
+        "$SHAI_FILE:SHAI"
+        "$QODER_FILE:Qoder CLI"
+        "$Q_FILE:Amazon Q Developer CLI"
+        "$BOB_FILE:IBM Bob"
+    )
+    
     # Check each possible agent file and update if it exists
-    if [[ -f "$CLAUDE_FILE" ]]; then
-        update_agent_file "$CLAUDE_FILE" "Claude Code"
-        found_agent=true
-    fi
-    
-    if [[ -f "$GEMINI_FILE" ]]; then
-        update_agent_file "$GEMINI_FILE" "Gemini CLI"
-        found_agent=true
-    fi
-    
-    if [[ -f "$COPILOT_FILE" ]]; then
-        update_agent_file "$COPILOT_FILE" "GitHub Copilot"
-        found_agent=true
-    fi
-    
-    if [[ -f "$CURSOR_FILE" ]]; then
-        update_agent_file "$CURSOR_FILE" "Cursor IDE"
-        found_agent=true
-    fi
-    
-    if [[ -f "$QWEN_FILE" ]]; then
-        update_agent_file "$QWEN_FILE" "Qwen Code"
-        found_agent=true
-    fi
-    
-    if [[ -f "$AGENTS_FILE" ]]; then
-        update_agent_file "$AGENTS_FILE" "Codex/opencode"
-        found_agent=true
-    fi
-    
-    if [[ -f "$WINDSURF_FILE" ]]; then
-        update_agent_file "$WINDSURF_FILE" "Windsurf"
-        found_agent=true
-    fi
-    
-    if [[ -f "$KILOCODE_FILE" ]]; then
-        update_agent_file "$KILOCODE_FILE" "Kilo Code"
-        found_agent=true
-    fi
-
-    if [[ -f "$AUGGIE_FILE" ]]; then
-        update_agent_file "$AUGGIE_FILE" "Auggie CLI"
-        found_agent=true
-    fi
-    
-    if [[ -f "$ROO_FILE" ]]; then
-        update_agent_file "$ROO_FILE" "Roo Code"
-        found_agent=true
-    fi
-
-    if [[ -f "$CODEBUDDY_FILE" ]]; then
-        update_agent_file "$CODEBUDDY_FILE" "CodeBuddy CLI"
-        found_agent=true
-    fi
-
-    if [[ -f "$SHAI_FILE" ]]; then
-        update_agent_file "$SHAI_FILE" "SHAI"
-        found_agent=true
-    fi
-
-    if [[ -f "$QODER_FILE" ]]; then
-        update_agent_file "$QODER_FILE" "Qoder CLI"
-        found_agent=true
-    fi
-
-    if [[ -f "$Q_FILE" ]]; then
-        update_agent_file "$Q_FILE" "Amazon Q Developer CLI"
-        found_agent=true
-    fi
-    
-    if [[ -f "$BOB_FILE" ]]; then
-        update_agent_file "$BOB_FILE" "IBM Bob"
-        found_agent=true
-    fi
+    for agent_config in "${AGENT_CONFIGS[@]}"; do
+        IFS=':' read -r agent_file agent_name <<< "$agent_config"
+        if [[ -f "$agent_file" ]]; then
+            update_agent_file "$agent_file" "$agent_name"
+            found_agent=true
+        fi
+    done
     
     # If no agent files exist, create a default Claude file
     if [[ "$found_agent" == false ]]; then

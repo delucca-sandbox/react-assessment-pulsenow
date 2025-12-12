@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 # Parse command line arguments
 JSON_MODE=false
-ARGS=()
 
 for arg in "$@"; do
     case "$arg" in
@@ -18,17 +17,26 @@ for arg in "$@"; do
             exit 0 
             ;;
         *) 
-            ARGS+=("$arg") 
+            echo "ERROR: Unknown argument: $arg" >&2
+            echo "Usage: $0 [--json]" >&2
+            exit 1
             ;;
     esac
 done
 
 # Get script directory and load common functions
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ ! -f "$SCRIPT_DIR/common.sh" ]]; then
+    echo "ERROR: Required file common.sh not found at $SCRIPT_DIR/common.sh" >&2
+    exit 1
+fi
 source "$SCRIPT_DIR/common.sh"
 
 # Get all paths and variables from common functions
-eval "$(get_feature_paths)"
+if ! eval "$(get_feature_paths)"; then
+    echo "ERROR: Failed to get feature paths from get_feature_paths" >&2
+    exit 1
+fi
 
 # Check if we're on a proper feature branch (only for git repos)
 check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
@@ -55,8 +63,18 @@ fi
 
 # Output results
 if $JSON_MODE; then
-    printf '{"FEATURE_SPEC":"%s","IMPL_PLAN":"%s","SPECS_DIR":"%s","BRANCH":"%s","HAS_GIT":"%s"}\n' \
-        "$FEATURE_SPEC" "$IMPL_PLAN" "$FEATURE_DIR" "$CURRENT_BRANCH" "$HAS_GIT"
+    if command -v jq >/dev/null 2>&1; then
+        jq -n \
+          --arg FEATURE_SPEC "$FEATURE_SPEC" \
+          --arg IMPL_PLAN "$IMPL_PLAN" \
+          --arg SPECS_DIR "$FEATURE_DIR" \
+          --arg BRANCH "$CURRENT_BRANCH" \
+          --arg HAS_GIT "$HAS_GIT" \
+          '{FEATURE_SPEC:$FEATURE_SPEC, IMPL_PLAN:$IMPL_PLAN, SPECS_DIR:$SPECS_DIR, BRANCH:$BRANCH, HAS_GIT:$HAS_GIT}'
+    else
+        echo "ERROR: --json requires jq to be installed" >&2
+        exit 2
+    fi
 else
     echo "FEATURE_SPEC: $FEATURE_SPEC"
     echo "IMPL_PLAN: $IMPL_PLAN" 

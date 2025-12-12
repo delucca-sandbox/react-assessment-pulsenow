@@ -20,26 +20,26 @@ test.describe('Accessibility', () => {
       // Wait for page content to load
       await expect(page.getByRole('heading', { name: heading, level: 1 })).toBeVisible()
       
-      // Should have h1 headings (app title + page title)
-      const h1Count = await page.locator('h1').count()
-      expect(h1Count).toBeGreaterThanOrEqual(1)
+      // Should have exactly one h1 heading within main content
+      const h1InMain = await page.locator('main h1').count()
+      expect(h1InMain).toBe(1)
     }
   })
 
   test('navigation is keyboard accessible', async ({ page }) => {
     await page.goto('/')
 
-    // Tab to navigation links
-    await page.keyboard.press('Tab')
-    await page.keyboard.press('Tab')
-    await page.keyboard.press('Tab')
-
-    // Should be able to navigate with Enter
-    const focusedElement = page.locator(':focus')
-    const tagName = await focusedElement.evaluate(el => el.tagName.toLowerCase())
+    // Focus on a specific navigation link
+    const assetsLink = page.getByRole('link', { name: /^assets$/i })
+    await assetsLink.focus()
+    await expect(assetsLink).toBeFocused()
     
-    // Should focus on interactive elements
-    expect(['a', 'button', 'input', 'select']).toContain(tagName)
+    // Press Enter to navigate
+    await page.keyboard.press('Enter')
+    
+    // Verify navigation occurred
+    await expect(page).toHaveURL(/\/assets/)
+    await expect(page.getByRole('heading', { name: 'Assets', level: 1 })).toBeVisible()
   })
 
   test('modal has focusable close button', async ({ page }) => {
@@ -64,6 +64,10 @@ test.describe('Accessibility', () => {
     // Close button should be visible and focusable
     const closeButton = page.getByRole('button', { name: /close modal/i })
     await expect(closeButton).toBeVisible()
+    
+    // Verify button is actually keyboard focusable
+    await closeButton.focus()
+    await expect(closeButton).toBeFocused()
   })
 
   test('interactive elements have focus indicators', async ({ page }) => {
@@ -144,7 +148,7 @@ test.describe('Accessibility', () => {
     expect(upCount + downCount).toBeGreaterThan(0)
   })
 
-  test('page has skip link or main landmark', async ({ page }) => {
+  test('page has main landmark', async ({ page }) => {
     await page.goto('/')
 
     // Should have main landmark
@@ -161,12 +165,8 @@ test.describe('Accessibility', () => {
 
     for (let i = 0; i < count; i++) {
       const button = buttons.nth(i)
-      const name = await button.getAttribute('aria-label')
-      const text = await button.textContent()
-
-      // Button should have either aria-label or text content
-      const hasName = (name && name.length > 0) || (text && text.trim().length > 0)
-      expect(hasName).toBe(true)
+      // Use Playwright's built-in accessible name assertion
+      await expect(button).toHaveAccessibleName(/.+/)
     }
   })
 })

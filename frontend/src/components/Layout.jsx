@@ -1,7 +1,15 @@
-import { Link, useLocation } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useState, useCallback } from 'react'
 import MetaMaskButton from './MetaMaskButton'
 import ThemeToggle from './ThemeToggle'
+
+const NAVIGATION = [
+  { name: 'Dashboard', path: '/', icon: '📊' },
+  { name: 'Assets', path: '/assets', icon: '💰' },
+  { name: 'News', path: '/news', icon: '📰' },
+  { name: 'Alerts', path: '/alerts', icon: '🔔' },
+  { name: 'Portfolio', path: '/portfolio', icon: '💼' },
+]
 
 /**
  * Layout - Main application layout with header, sidebar navigation, and content area
@@ -15,14 +23,6 @@ const Layout = ({ children }) => {
   const toggleSidebar = useCallback(() => {
     setSidebarOpen(prev => !prev)
   }, [])
-
-  const navigation = [
-    { name: 'Dashboard', path: '/', icon: '📊' },
-    { name: 'Assets', path: '/assets', icon: '💰' },
-    { name: 'News', path: '/news', icon: '📰' },
-    { name: 'Alerts', path: '/alerts', icon: '🔔' },
-    { name: 'Portfolio', path: '/portfolio', icon: '💼' },
-  ]
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -76,32 +76,32 @@ const Layout = ({ children }) => {
         >
           <nav className="p-4">
             <ul className="space-y-2" role="list">
-              {navigation.map((item) => {
-                const isActive = location.pathname === item.path
-                return (
-                  <li key={item.path}>
-                    <Link
-                      to={item.path}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-pulse-primary ${
+              {NAVIGATION.map((item) => (
+                <li key={item.path}>
+                  <NavLink
+                    to={item.path}
+                    end={item.path === '/'}
+                    className={({ isActive }) =>
+                      `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-pulse-primary ${
                         isActive
                           ? 'bg-pulse-primary text-white'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                      }`}
-                      aria-current={isActive ? 'page' : undefined}
-                    >
-                      <span className="text-xl" aria-hidden="true">{item.icon}</span>
-                      {sidebarOpen && <span>{item.name}</span>}
-                      {!sidebarOpen && <span className="sr-only">{item.name}</span>}
-                    </Link>
-                  </li>
-                )
-              })}
+                      }`
+                    }
+                    aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
+                  >
+                    <span className="text-xl" aria-hidden="true">{item.icon}</span>
+                    {sidebarOpen && <span>{item.name}</span>}
+                    {!sidebarOpen && <span className="sr-only">{item.name}</span>}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
           </nav>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8" role="main">
+        <main className="flex-1 p-8">
           {children}
         </main>
       </div>
